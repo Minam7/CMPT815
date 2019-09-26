@@ -17,7 +17,7 @@ Question 1.
 a)
 </h2>
 <p>
-$$\lambda=5\frac{session}{minute}\rightarrow\mu=\frac{1}{\lambda}=\frac{1minute}{5session}\times\frac{60 seconds}{1 minute}=12seconds$$
+$$\lambda=5\frac{session}{minute}\rightarrow mean=\frac{1}{\lambda}=\frac{1minute}{5session}\times\frac{60 seconds}{1 minute}=12seconds$$
 </p>
 
 <h2>
@@ -53,7 +53,8 @@ Question 2.
 a)
 </h2>
 <p>
-
+W:
+$$mean=\frac{1}{\lambda}=12\rightarrow lambda=\frac{1}{12}$$
 </p>
 <h2>
 b)
