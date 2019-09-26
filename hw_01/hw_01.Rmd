@@ -1,0 +1,133 @@
+---
+title: "Characterizing Measurement Data"
+subtitle: "Assignment 1"
+author: "Mina Mousavifar - 11279515 - sem311"
+date: "`r Sys.time()`"
+output:
+  pdf_document:
+  toc: true
+  toc_depth: 2
+---
+
+<h1>
+Question 1.
+</h1>
+
+<h2>
+a)
+</h2>
+<p>
+$$\lambda=5\frac{session}{minute}\rightarrow\mu=\frac{1}{\lambda}=\frac{1minute}{5session}\times\frac{60 seconds}{1 minute}=12seconds$$
+</p>
+
+<h2>
+b)
+</h2>
+<p>
+
+</p>
+
+<h2>
+c)
+</h2>
+<p>
+
+</p>
+
+<h2>
+d)
+</h2>
+<p>
+
+</p>
+```{r, message=FALSE}
+  
+```
+
+***
+<h1>
+Question 2.
+</h1>
+
+<h2>
+a)
+</h2>
+<p>
+
+</p>
+<h2>
+b)
+</h2>
+<p>
+
+</p>
+<h2>
+c)
+</h2>
+<p>
+
+</p>
+```{r, message=FALSE}
+
+```
+
+
+***
+<h1>
+Question 3.
+</h1>
+
+<p>
+
+</p>
+
+```{r, message=FALSE}
+
+```
+
+
+***
+<h1>
+Question 4.
+</h1>
+
+<p>
+
+</p>
+
+```{r, message=FALSE}
+
+```
+
+
+***
+<h1>
+Question 5.
+</h1>
+
+<h2>
+a)
+</h2>
+<p>
+
+</p>
+
+<h2>
+b)
+</h2>
+<p>
+
+</p>
+
+<h2>
+c)
+</h2>
+<p>
+
+</p>
+
+```{r, message=FALSE}
+
+```
+
+
