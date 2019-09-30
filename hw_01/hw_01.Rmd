@@ -54,7 +54,24 @@ a)
 </h2>
 <p>
 W:
-$$mean=\frac{1}{\lambda}=12\rightarrow lambda=\frac{1}{12}$$
+$$mean=\frac{1}{\lambda}=12\rightarrow \lambda=\frac{1}{12}=0.08\overline{3}$$
+X:
+$$mean={n}{\gamma}\rightarrow \gamma=\frac{12}{3}=4$$
+Y:
+$$mean=e^{(\mu+\frac{\sigma^2}{2})}\rightarrow e^{(1+\frac{\sigma^2}{2})}=12 \rightarrow ln(e^{(1+\frac{\sigma^2}{2})})=ln(12) \rightarrow 1+\frac{\sigma^2}{2}=ln(12) \rightarrow \frac{\sigma^2}{2}=ln(12)-1 \rightarrow \sigma^2=2ln(12)-2$$
+$$\sigma=\pm(2ln(12)-2)$$
+```{r, message=FALSE}
+sigma=2*log2(12) - 2
+cat("sigma is: +-",sigma)
+```
+Z:
+\[mean=\left\{
+                \begin{array}{ll}
+                  \infty \quad for \quad  \alpha \leq1\\
+                  \frac{\alpha * k}{\alpha - 1} \quad for \quad  \alpha >1
+                \end{array}
+              \right.\]
+$$\alpha=1.25 \rightarrow mean=\frac{\alpha * k}{\alpha - 1} \rightarrow 12=\frac{1.25k}{1.25-1} \rightarrow 12=\frac{1.25k}{0.25} \rightarrow 12=5k \rightarrow k = \frac{12}{5}=2.4$$
 </p>
 <h2>
 b)
