@@ -40,11 +40,6 @@ d)
 <p>
 Because interarrival times are IID, the first arrival doesn't change the mean.
 $$time = 3*60=180seconds \rightarrow arrivals=\left \lfloor{\frac{180-18}{12\frac{arrival}{seconds}}}\right \rfloor=13 + 1(first arrival) = 14$$
-$$\left \lceil{x}\right \rceil $$
-</p>
-```{r, message=FALSE}
-  
-```
 
 ***
 <h1>
