@@ -86,13 +86,23 @@ cat("Probability for exponential distribution is: ",p)
 X:
 $$F(x)=P(x<12)=1-\sum_{n=0}^{2}\frac{e^{-{\frac{x}{\gamma}}}x^n}{\gamma^nn!}=1- \sum_{i=0}^{2}\frac{e^{-{\frac{x}{4}}}x^n}{4^nn!}$$
 ```{r, message=FALSE}
-p=pgamma(3, 4) 
+p=pgamma(12, shape= 3, scale= 4) 
 cat("Probability for erlang distribution is: ",p)
 ```
 Y:
-
+$$F(x)=P(x<12)=\phi(\frac{(lnx) - \mu}{\sigma})$$
+where $\phi$ is the cumulative distribution function of the standard normal distribution.
+```{r, message=FALSE}
+p=plnorm(12, meanlog = 1, sdlog = sigma) 
+cat("Probability for lognormal distribution is: ",p)
+```
 Z:
-
+$$F(x)=P(x<12)=1-{\frac{k}{x}}^\alpha$$
+```{r, message=FALSE}
+library(EnvStats)
+p=ppareto(12, location=2.4, shape=1.25) 
+cat("Probability for pareto distribution is: ",p)
+```
 </p>
 
 <h2>
