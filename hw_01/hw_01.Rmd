@@ -78,13 +78,17 @@ b)
 
 <p>
 W:
-$$P(x<12)=1-e^{-\lambda x}=1-e^{-\frac{1}{12}*12} = 1 - \frac{1}{e}$$
+$$F(x)=P(x<12)=1-e^{-\lambda x}=1-e^{-\frac{1}{12}*12} = 1 - \frac{1}{e}$$
 ```{r, message=FALSE}
 p=pexp(12, rate=1/12) 
 cat("Probability for exponential distribution is: ",p)
 ```
 X:
-
+$$F(x)=P(x<12)=1-\sum_{n=0}^{2}\frac{e^{-{\frac{x}{\gamma}}}x^n}{\gamma^nn!}=1- \sum_{i=0}^{2}\frac{e^{-{\frac{x}{4}}}x^n}{4^nn!}$$
+```{r, message=FALSE}
+p=pgamma(3, 4) 
+cat("Probability for erlang distribution is: ",p)
+```
 Y:
 
 Z:
