@@ -24,21 +24,23 @@ $$\lambda=5\frac{session}{minute}\rightarrow mean=\frac{1}{\lambda}=\frac{1minut
 b)
 </h2>
 <p>
-
+Exponential distribution has *memoryless property*. It means that no matter how much time has elapsed since the previous arrival, the mean waiting time at time T for the next entry will still be 12 seconds.
 </p>
 
 <h2>
 c)
 </h2>
 <p>
-
+$$arrivals = period*lambda = 2minutes*5\frac{arrival}{minute} = 10 arrivals$$
 </p>
 
 <h2>
 d)
 </h2>
 <p>
-
+Because interarrival times are IID, the first arrival doesn't change the mean.
+$$time = 3*60=180seconds \rightarrow arrivals=\left \lfloor{\frac{180-18}{12\frac{arrival}{seconds}}}\right \rfloor=13 + 1(first arrival) = 14$$
+$$\left \lceil{x}\right \rceil $$
 </p>
 ```{r, message=FALSE}
   
@@ -52,6 +54,7 @@ Question 2.
 <h2>
 a)
 </h2>
+
 <p>
 W:
 $$mean=\frac{1}{\lambda}=12\rightarrow \lambda=\frac{1}{12}=0.08\overline{3}$$
@@ -73,16 +76,38 @@ Z:
               \right.\]
 $$\alpha=1.25 \rightarrow mean=\frac{\alpha * k}{\alpha - 1} \rightarrow 12=\frac{1.25k}{1.25-1} \rightarrow 12=\frac{1.25k}{0.25} \rightarrow 12=5k \rightarrow k = \frac{12}{5}=2.4$$
 </p>
+
 <h2>
 b)
 </h2>
+
 <p>
+W:
+$$P(x<12)=1-e^{-\lambda x}=1-e^{-\frac{1}{12}*12} = 1 - \frac{1}{e}$$
+```{r, message=FALSE}
+p=pexp(12, rate=1/12) 
+cat("Probability for exponential distribution is: ",p)
+```
+X:
+
+Y:
+
+Z:
 
 </p>
+
 <h2>
 c)
 </h2>
+
 <p>
+W:
+
+X:
+
+Y:
+
+Z:
 
 </p>
 ```{r, message=FALSE}
