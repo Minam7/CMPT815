@@ -2,7 +2,6 @@
 title: "Characterizing Measurement Data"
 subtitle: "Assignment 1"
 author: "Mina Mousavifar - 11279515 - sem311"
-date: "`r Sys.time()`"
 output:
   pdf_document:
   toc: true
@@ -171,10 +170,6 @@ cat("CDF for cold items of Zipf(0.85) is: ", p)
 Question 4.
 </h1>
 
-<p>
-
-</p>
-
 ```{r, message=FALSE}
 library(ggplot2)
 
@@ -182,22 +177,20 @@ data <- read.delim("data/refcounts.txt", header = FALSE, sep = "\t", stringsAsFa
 names(data) <- c("index", "refcount")
 data <- data %>% mutate(rank=row_number(-refcount)) %>% mutate(logcount=log(refcount), logrank=log(rank))
 
-p <- ggplot(data = data, mapping = aes(x = logrank, y=logcount, color = refcount)) +  geom_point() + ggtitle("Page reference distribution") + ylab("reference count") + scale_color_gradient(low="darkgreen", high="lightgreen") + geom_line() + theme(legend.position = "none")
+p <- ggplot(data = data, mapping = aes(x = logrank, y=logcount, color = refcount)) +  geom_point() + ggtitle("Page reference distribution") + ylab("log reference count") + xlab("log rank") + scale_color_gradient(low="darkgreen", high="lightgreen") + geom_line() + theme(legend.position = "none")
 p
 ```
 
 ```{r, message=FALSE}
-xm <- min(data[,2])
-#pareto<- data %>% mutate()
-
 lzipf <- function(s,N) -s*log(1:N)-log(sum(1/(1:N)^s))
 opt.f <- function(s) sum((data$logcount-lzipf(s,length(data$logcount)))^2)
 opt <- optimize(opt.f,c(0.5,125))
 opt
-
-
+cat("alpha is: ", opt$minimum)
 ```
-
+<p>
+So alpha is 0.5000669.
+</p>
 ***
 <h1>
 Question 5.
@@ -259,11 +252,12 @@ exp = data.frame(x=x, px=1-pexp(x, rate=1/halfmean))
 # iii)
 plot_half_data <- plot_half_data %>% mutate(zero_diff = ifelse(diff == 0, log(0.5), log(diff)))
 mu <- sum(plot_half_data$zero_diff)/n
+cat("mean for 27 Sep 12-16", mu)
 
 plot_half_data <- plot_half_data %>% mutate(minus_mu_diff = (zero_diff - mu)^2)
 sigma <- sqrt(sum(plot_half_data$minus_mu_diff)/n)
 lognorm = data.frame(x=x, px=1-plnorm(x, meanlog = mu, sdlog = sigma))
-
+cat("sigma for 27 Sep 12-16", sigma)
 
 p <- ggplot(data = plot_half_data, mapping = aes(x = diff, y = ccdf)) +  
   xlim(0,251) + ylim(NA, 1) + scale_y_continuous(trans = 'log10') + ggtitle("Interarrival times for 27 Sep 12-16") + xlab("Interarrival time") + ylab("CCDF") +
@@ -298,11 +292,12 @@ exp = data.frame(x=x, px=1-pexp(x, rate=1/fullmean))
 # iii)
 plot_full_data <- plot_full_data %>% mutate(zero_diff = ifelse(diff == 0, log(0.5), log(diff)))
 mu <- sum(plot_full_data$zero_diff)/n
+cat("mean for 27 Sep", mu)
 
 plot_full_data <- plot_full_data %>% mutate(minus_mu_diff = (zero_diff - mu)^2)
 sigma <- sqrt(sum(plot_full_data$minus_mu_diff)/n)
 lognorm = data.frame(x=x, px=1-plnorm(x, meanlog = mu, sdlog = sigma))
-
+cat("sigma for 27 Sep", sigma)
 
 p <- ggplot(data = plot_full_data, mapping = aes(x = diff, y = ccdf)) +  
   xlim(0,251) + ylim(NA, 1) + scale_y_continuous(trans = 'log10') + ggtitle("Interarrival times for 27 Sep") + xlab("Interarrival time") + ylab("CCDF") +
