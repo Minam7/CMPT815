@@ -175,9 +175,14 @@ library(ggplot2)
 
 data <- read.delim("data/refcounts.txt", header = FALSE, sep = "\t", stringsAsFactor = FALSE)
 names(data) <- c("index", "refcount")
-data <- data %>% mutate(rank=row_number(-refcount)) %>% mutate(logcount=log(refcount), logrank=log(rank))
+data <- data %>% mutate(rank=row_number(-refcount)) %>% 
+  mutate(logcount=log(refcount), logrank=log(rank))
 
-p <- ggplot(data = data, mapping = aes(x = logrank, y=logcount, color = refcount)) +  geom_point() + ggtitle("Page reference distribution") + ylab("log reference count") + xlab("log rank") + scale_color_gradient(low="darkgreen", high="lightgreen") + geom_line() + theme(legend.position = "none")
+p <- ggplot(data = data, mapping = aes(x = logrank, y=logcount, color = refcount)) +  
+  geom_point() + ggtitle("Page reference distribution") + 
+  ylab("log reference count") + xlab("log rank") + 
+  scale_color_gradient(low="darkgreen", high="lightgreen") + geom_line() + 
+  theme(legend.position = "none")
 p
 ```
 
@@ -188,9 +193,7 @@ opt <- optimize(opt.f,c(0.5,125))
 opt
 cat("alpha is: ", opt$minimum)
 ```
-<p>
-So alpha is 0.5000669.
-</p>
+
 ***
 <h1>
 Question 5.
@@ -230,19 +233,23 @@ fullsc = var(full_data$diff)/(fullmean^2)
 
 halfmean = mean(half_data$diff)
 halfsc = var(half_data$diff)/(halfmean^2)
-cat("mean interarrival times for sep 27 trace is: ", fullmean, " seconds and variance is: ", fullsc, " seconds")
-cat("mean interarrival times for sep 27 12 - 16 trace is: ", halfmean, " seconds variance is: ", halfsc, " seconds")
+cat("mean interarrival times for sep 27 trace is: ", fullmean, " seconds")
+cat("variance for sep 27 trace is: ", fullsc, " seconds")
+cat("mean interarrival times for sep 27 12 - 16 trace is: ", halfmean, " seconds") 
+cat("variance for sep 27 12 - 16 trace is: ", halfsc, " seconds")
 ```
 
 <h2>
 **b)**
 </h2>
-```{r, message=FALSE}
+```{r, message=FALSE, warning=FALSE}
 # i)
 n = nrow(half_data)
 
-plot_half_data <- half_data %>% filter(diff < 251) %>% 
-  arrange(diff) %>% 
+plot_half_data <- half_data %>% filter(diff < 251)
+
+n = nrow(plot_half_data)
+plot_half_data <- plot_half_data %>% arrange(diff) %>% 
   mutate(ccdf = (n - row_number())/n)
 
 # ii)
@@ -250,7 +257,8 @@ x = seq(min(plot_half_data$diff), max(plot_half_data$diff) + 1, length.out=n)
 exp = data.frame(x=x, px=1-pexp(x, rate=1/halfmean))
 
 # iii)
-plot_half_data <- plot_half_data %>% mutate(zero_diff = ifelse(diff == 0, log(0.5), log(diff)))
+plot_half_data <- plot_half_data %>% 
+  mutate(zero_diff = ifelse(diff == 0, log(0.5), log(diff)))
 mu <- sum(plot_half_data$zero_diff)/n
 cat("mean for 27 Sep 12-16", mu)
 
@@ -260,7 +268,9 @@ lognorm = data.frame(x=x, px=1-plnorm(x, meanlog = mu, sdlog = sigma))
 cat("sigma for 27 Sep 12-16", sigma)
 
 p <- ggplot(data = plot_half_data, mapping = aes(x = diff, y = ccdf)) +  
-  xlim(0,251) + ylim(NA, 1) + scale_y_continuous(trans = 'log10') + ggtitle("Interarrival times for 27 Sep 12-16") + xlab("Interarrival time") + ylab("CCDF") +
+  xlim(0,251) + ylim(NA, 1) + scale_y_continuous(trans = 'log10') + 
+  ggtitle("Interarrival times for 27 Sep 12-16") + 
+  xlab("Interarrival time") + ylab("CCDF") +
   geom_point() +
   geom_smooth(data = plot_half_data, aes(x = diff, y = ccdf, color = "CCDF")) +
   geom_smooth(data = exp, aes(x = x, y = px, color = "Exponential Distribution")) + 
@@ -277,20 +287,20 @@ As we can see here, at the beginning, lognormal distribution is a better fit tha
 **c)**
 </h2>
 
-```{r, message=FALSE}
+```{r, message=FALSE, warning=FALSE}
 # i)
 n = nrow(full_data)
 
-plot_full_data <- full_data %>% filter(diff < 251) %>% 
-  arrange(diff) %>% 
+plot_full_data <- full_data %>% arrange(diff) %>% 
   mutate(ccdf = (n - row_number())/n)
 
 # ii)
-x = seq(min(plot_full_data$diff), max(plot_full_data$diff) + 1, length.out=n)
+x = seq(min(plot_full_data$diff), 250, length.out=n)
 exp = data.frame(x=x, px=1-pexp(x, rate=1/fullmean))
 
 # iii)
-plot_full_data <- plot_full_data %>% mutate(zero_diff = ifelse(diff == 0, log(0.5), log(diff)))
+plot_full_data <- plot_full_data %>% 
+  mutate(zero_diff = ifelse(diff == 0, log(0.5), log(diff)))
 mu <- sum(plot_full_data$zero_diff)/n
 cat("mean for 27 Sep", mu)
 
@@ -300,7 +310,9 @@ lognorm = data.frame(x=x, px=1-plnorm(x, meanlog = mu, sdlog = sigma))
 cat("sigma for 27 Sep", sigma)
 
 p <- ggplot(data = plot_full_data, mapping = aes(x = diff, y = ccdf)) +  
-  xlim(0,251) + ylim(NA, 1) + scale_y_continuous(trans = 'log10') + ggtitle("Interarrival times for 27 Sep") + xlab("Interarrival time") + ylab("CCDF") +
+  xlim(0,251) + ylim(NA, 1) + scale_y_continuous(trans = 'log10') + 
+  ggtitle("Interarrival times for 27 Sep") + 
+  xlab("Interarrival time") + ylab("CCDF") +
   geom_point() +
   geom_smooth(data = plot_full_data, aes(x = diff, y = ccdf, color = "CCDF")) +
   geom_smooth(data = exp, aes(x = x, y = px, color = "Exponential Distribution")) + 
