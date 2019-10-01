@@ -149,17 +149,20 @@ $$P_R(n)=\frac{\frac{1}{n^\alpha}}{\sum_{m=1}^{k}\frac{1}{m^\alpha}} \rightarrow
 
 ```{r, message=FALSE}
 library(dplyr)
+library(sads)
 
 powers <- data.frame("i"=0:10000000, "pow"=rep(0,10000001), stringsAsFactors = FALSE)
 powers$pow <- powers$i^1.25
 is <- powers %>% filter(pow > 86400)
-head(is, 1)
 cat("i: ", is$i[1])
+p = 1 - pzipf(is$i[1], 10000000, 1.25, lower.tail=TRUE, log.p=FALSE)
+cat("CDF for cold items of Zipf(1.25) is: ", p)
 
 powers$pow <- powers$i^0.85
 is <- powers %>% filter(pow > 86400)
-head(is, 1)
 cat("i: ", is$i[1])
+p = 1 - pzipf(is$i[1], 10000000, 0.85, lower.tail=TRUE, log.p=FALSE)
+cat("CDF for cold items of Zipf(0.85) is: ", p)
 ```
 
 
@@ -173,9 +176,27 @@ Question 4.
 </p>
 
 ```{r, message=FALSE}
+library(ggplot2)
 
+data <- read.delim("data/refcounts.txt", header = FALSE, sep = "\t", stringsAsFactor = FALSE)
+names(data) <- c("index", "refcount")
+data <- data %>% mutate(rank=row_number(-refcount)) %>% mutate(logcount=log(refcount), logrank=log(rank))
+
+p <- ggplot(data = data, mapping = aes(x = logrank, y=logcount, color = refcount)) +  geom_point() + ggtitle("Page reference distribution") + ylab("reference count") + scale_color_gradient(low="darkgreen", high="lightgreen") + geom_line() + theme(legend.position = "none")
+p
 ```
 
+```{r, message=FALSE}
+xm <- min(data[,2])
+#pareto<- data %>% mutate()
+
+lzipf <- function(s,N) -s*log(1:N)-log(sum(1/(1:N)^s))
+opt.f <- function(s) sum((data$logcount-lzipf(s,length(data$logcount)))^2)
+opt <- optimize(opt.f,c(0.5,125))
+opt
+
+
+```
 
 ***
 <h1>
@@ -186,8 +207,39 @@ Question 5.
 **a)**
 </h2>
 <p>
-
+for calculating interarrival times in this question, we calculate exact second for each data and find the differrence between each two consequtive row. Although we should manage the difference between 23 and 00 hour.
 </p>
+
+```{r, message=FALSE}
+library(lubridate)
+
+fulldata <- read.delim("data/sep27.txt", header = FALSE, sep = "\t", stringsAsFactor = FALSE)
+halfdata <- read.delim("data/sep27h12-16.txt", header = FALSE, sep = "\t", stringsAsFactor = FALSE)
+
+names(fulldata) = c('time')
+names(halfdata) = c('time')
+
+fulldata <- fulldata %>% mutate(time = parse_date_time(time, orders="HMS")) %>%
+  mutate(hour = hour(time), minute = minute(time), second = second(time)) %>% 
+  mutate(tot = hour*3600 + minute*60 + second) %>% 
+  mutate(diff = tot - lag(tot), diff = ifelse(diff < 0, diff + 86400, diff))
+# delete first row for removing one data without any prior to calculate
+full_data <- fulldata[-1,]
+
+halfdata <- halfdata %>% mutate(time = parse_date_time(time, orders="HMS")) %>% 
+  mutate(hour = hour(time), minute = minute(time), second = second(time)) %>% 
+  mutate(tot = hour*3600 + minute*60 + second) %>% 
+  mutate(diff = tot - lag(tot))
+half_data <- halfdata[-1,]
+
+fullmean = mean(full_data$diff)
+fullsc = var(full_data$diff)/(fullmean^2)
+
+halfmean = mean(half_data$diff)
+halfsc = var(half_data$diff)/(halfmean^2)
+cat("mean interarrival times for sep 27 trace is: ", fullmean, " seconds and variance is: ", fullsc, " seconds")
+cat("mean interarrival times for sep 27 12 - 16 trace is: ", halfmean, " seconds variance is: ", halfsc, " seconds")
+```
 
 <h2>
 **b)**
