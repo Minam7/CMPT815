@@ -144,11 +144,22 @@ Question 3.
 </h1>
 
 <p>
-
+$$P_R(n)=\frac{\frac{1}{n^\alpha}}{\sum_{m=1}^{k}\frac{1}{m^\alpha}} \rightarrow i^{-\alpha}<\frac{1}{day}=\frac{1}{60*60*24 seconds}=\frac{1}{86400} \rightarrow i^\alpha > 86400 \rightarrow i^{1.25}>86400$$
 </p>
 
 ```{r, message=FALSE}
+library(dplyr)
 
+powers <- data.frame("i"=0:10000000, "pow"=rep(0,10000001), stringsAsFactors = FALSE)
+powers$pow <- powers$i^1.25
+is <- powers %>% filter(pow > 86400)
+head(is, 1)
+cat("i: ", is$i[1])
+
+powers$pow <- powers$i^0.85
+is <- powers %>% filter(pow > 86400)
+head(is, 1)
+cat("i: ", is$i[1])
 ```
 
 
