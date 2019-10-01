@@ -244,19 +244,76 @@ cat("mean interarrival times for sep 27 12 - 16 trace is: ", halfmean, " seconds
 <h2>
 **b)**
 </h2>
-<p>
+```{r, message=FALSE}
+# i)
+n = nrow(half_data)
 
+plot_half_data <- half_data %>% filter(diff < 251) %>% 
+  arrange(diff) %>% 
+  mutate(ccdf = (n - row_number())/n)
+
+# ii)
+x = seq(min(plot_half_data$diff), max(plot_half_data$diff) + 1, length.out=n)
+exp = data.frame(x=x, px=1-pexp(x, rate=1/halfmean))
+
+# iii)
+plot_half_data <- plot_half_data %>% mutate(zero_diff = ifelse(diff == 0, log(0.5), log(diff)))
+mu <- sum(plot_half_data$zero_diff)/n
+
+plot_half_data <- plot_half_data %>% mutate(minus_mu_diff = (zero_diff - mu)^2)
+sigma <- sqrt(sum(plot_half_data$minus_mu_diff)/n)
+lognorm = data.frame(x=x, px=1-plnorm(x, meanlog = mu, sdlog = sigma))
+
+
+p <- ggplot(data = plot_half_data, mapping = aes(x = diff, y = ccdf)) +  
+  xlim(0,251) + ylim(NA, 1) + scale_y_continuous(trans = 'log10') + ggtitle("Interarrival times for 27 Sep 12-16") + xlab("Interarrival time") + ylab("CCDF") +
+  geom_point() +
+  geom_smooth(data = plot_half_data, aes(x = diff, y = ccdf, color = "CCDF")) +
+  geom_smooth(data = exp, aes(x = x, y = px, color = "Exponential Distribution")) + 
+  geom_smooth(data = lognorm, aes(x = x, y = px, color = "Lognormal Distribution"))
+  
+p
+```
+
+<p>
+As we can see here, at the beginning, lognormal distribution is a better fit than exponential distribution. However, as we proceed to bigger interarrival times, both distributions are taking distance from the original distribution.
 </p>
 
 <h2>
 **c)**
 </h2>
-<p>
-
-</p>
 
 ```{r, message=FALSE}
+# i)
+n = nrow(full_data)
 
+plot_full_data <- full_data %>% filter(diff < 251) %>% 
+  arrange(diff) %>% 
+  mutate(ccdf = (n - row_number())/n)
+
+# ii)
+x = seq(min(plot_full_data$diff), max(plot_full_data$diff) + 1, length.out=n)
+exp = data.frame(x=x, px=1-pexp(x, rate=1/fullmean))
+
+# iii)
+plot_full_data <- plot_full_data %>% mutate(zero_diff = ifelse(diff == 0, log(0.5), log(diff)))
+mu <- sum(plot_full_data$zero_diff)/n
+
+plot_full_data <- plot_full_data %>% mutate(minus_mu_diff = (zero_diff - mu)^2)
+sigma <- sqrt(sum(plot_full_data$minus_mu_diff)/n)
+lognorm = data.frame(x=x, px=1-plnorm(x, meanlog = mu, sdlog = sigma))
+
+
+p <- ggplot(data = plot_full_data, mapping = aes(x = diff, y = ccdf)) +  
+  xlim(0,251) + ylim(NA, 1) + scale_y_continuous(trans = 'log10') + ggtitle("Interarrival times for 27 Sep") + xlab("Interarrival time") + ylab("CCDF") +
+  geom_point() +
+  geom_smooth(data = plot_full_data, aes(x = diff, y = ccdf, color = "CCDF")) +
+  geom_smooth(data = exp, aes(x = x, y = px, color = "Exponential Distribution")) + 
+  geom_smooth(data = lognorm, aes(x = x, y = px, color = "Lognormal Distribution"))
+  
+p
 ```
 
-
+<p>
+As we can see here, lognormal distribution is completely a better fit than exponential distribution and is acting close to the original distribution.
+</p>
