@@ -1,0 +1,153 @@
+---
+title: "Analytic Models"
+subtitle: "Assignment 2"
+author: "Mina Mousavifar - 11279515 - sem311"
+output:
+  pdf_document:
+  toc: true
+  toc_depth: 2
+---
+
+<h1>
+Question 1.
+</h1>
+
+<h2>
+**a)**
+</h2>
+<p>
+$$answer!$$
+</p>
+
+<h2>
+**b)**
+</h2>
+<p>
+
+</p>
+
+***
+<h1>
+Question 2.
+</h1>
+
+<h2>
+**a)**
+</h2>
+
+<p>
+$$answer!$$
+```{r, message=FALSE}
+
+```
+</p>
+
+<h2>
+**b)**
+</h2>
+
+<p>
+$$answer!$$
+```{r, message=FALSE}
+
+```
+</p>
+
+***
+<h1>
+Question 3.
+</h1>
+
+<h2>
+**a)**
+</h2>
+
+<p>
+$$answer!$$
+</p>
+
+<h2>
+**b)**
+</h2>
+
+<p>
+$$answer!$$
+</p>
+
+<h2>
+**c)**
+</h2>
+
+<p>
+$$answer!$$
+</p>
+
+***
+<h1>
+Question 4.
+</h1>
+
+<h2>
+**a)**
+</h2>
+
+<p>
+$$answer!$$
+</p>
+
+```{r, message=FALSE}
+
+```
+
+<h2>
+**b)**
+</h2>
+
+<p>
+$$answer!$$
+</p>
+
+```{r, message=FALSE}
+
+```
+
+<h2>
+**c)**
+</h2>
+
+<p>
+$$answer!$$
+</p>
+
+```{r, message=FALSE}
+
+```
+
+***
+<h1>
+Question 5.
+</h1>
+
+<h2>
+**a)**
+</h2>
+
+<p>
+$$answer!$$
+</p>
+
+```{r, message=FALSE}
+
+```
+
+<h2>
+**b)**
+</h2>
+
+<p>
+$$answer!$$
+</p>
+
+```{r, message=FALSE}
+
+```
