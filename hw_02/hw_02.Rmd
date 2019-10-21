@@ -16,14 +16,26 @@ Question 1.
 **a)**
 </h2>
 <p>
-$$answer!$$
+Based on Little's law so far we have:
+$N = X(R + Z)$
+$\newline$
+Where N = number of users in system, X = access rate to webpage, R = mean residence time, Z = think time.
+$\newline$
+In addition access rate to disk is 16 $\frac{access}{second}$ and each webpage access needs 2 accesses to disk. So the access rate for a webpage is:
+$X_{webpage}=16/2=8$ $\frac{access}{second}$
+$\newline$
+So:
+$$36 = 8*(1.5+Z) \rightarrow 4.5 = 1.5 + Z \rightarrow Z = 3 seconds$$
 </p>
 
 <h2>
 **b)**
 </h2>
 <p>
-
+Based on Little's law and previous part: $N = X*Z$
+$\newline$
+Where N = average number of users thinking, X = access rate to webpage, Z = think time.
+$$N = 3*8 = 24$$
 </p>
 
 ***
