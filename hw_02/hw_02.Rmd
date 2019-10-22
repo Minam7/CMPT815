@@ -193,36 +193,29 @@ Question 4.
 </h2>
 
 <p>
-$$answer!$$
+$$U = \lambda*S=8000\frac{packet}{second}*0.1millisecond*\frac{1second}{1000millisecond}=0.8$$
 </p>
-
-```{r, message=FALSE}
-
-```
 
 <h2>
 **b)**
 </h2>
 
 <p>
-$$answer!$$
+Because of poisson arrival and exponential distributed service time we have M/M/1 queue. So we have:
+$$R = \frac{S}{1 - \lambda*S} = \frac{S}{1 - U} = \frac{0.1millisecond*\frac{1second}{1000millisecond}}{1-0.8} = 0.0005=0.05millisecond$$
+$$L_Q=\frac{U^2}{1-U}=\frac{0.8^2}{1-0.8}=3.2$$
 </p>
 
-```{r, message=FALSE}
-
-```
 
 <h2>
 **c)**
 </h2>
 
 <p>
-$$answer!$$
+Because of poisson arrival and deterministic service time we have M/D/1 queue. So we have:
+$$R = S+\frac{S}{2}(\frac{\lambda S}{1-\lambda S}) = 0.0001 + 0.00005(\frac{0.8}{0.2})=0.0003$$
+$$L_Q=\frac{1}{2}\frac{U^2}{1-U}= 0.5*\frac{0.8^2}{1-0.8}=1.6$$
 </p>
-
-```{r, message=FALSE}
-
-```
 
 ***
 <h1>
@@ -238,6 +231,8 @@ $$answer!$$
 </p>
 
 ```{r, message=FALSE}
+r_rate = (1:9)*0.1
+
 
 ```
 
