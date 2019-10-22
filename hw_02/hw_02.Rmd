@@ -202,7 +202,7 @@ $$U = \lambda*S=8000\frac{packet}{second}*0.1millisecond*\frac{1second}{1000mill
 
 <p>
 Because of poisson arrival and exponential distributed service time we have M/M/1 queue. So we have:
-$$R = \frac{S}{1 - \lambda*S} = \frac{S}{1 - U} = \frac{0.1millisecond*\frac{1second}{1000millisecond}}{1-0.8} = 0.0005=0.05millisecond$$
+$$R = \frac{S}{1 - \lambda*S} = \frac{S}{1 - U} = \frac{0.1millisecond*\frac{1second}{1000millisecond}}{1-0.8} = 0.0005=0.5millisecond$$
 $$L_Q=\frac{U^2}{1-U}=\frac{0.8^2}{1-0.8}=3.2$$
 </p>
 
@@ -213,7 +213,7 @@ $$L_Q=\frac{U^2}{1-U}=\frac{0.8^2}{1-0.8}=3.2$$
 
 <p>
 Because of poisson arrival and deterministic service time we have M/D/1 queue. So we have:
-$$R = S+\frac{S}{2}(\frac{\lambda S}{1-\lambda S}) = 0.0001 + 0.00005(\frac{0.8}{0.2})=0.0003$$
+$$R = S+\frac{S}{2}(\frac{\lambda S}{1-\lambda S}) = 0.0001 + 0.00005(\frac{0.8}{0.2})=0.0003 = 0.3millisecond$$
 $$L_Q=\frac{1}{2}\frac{U^2}{1-U}= 0.5*\frac{0.8^2}{1-0.8}=1.6$$
 </p>
 
@@ -227,23 +227,110 @@ Question 5.
 </h2>
 
 <p>
-$$answer!$$
+
+Because of poisson arrival and deterministic service time we have M/D/1 queue, so the residence time is:
+$$R = \frac{S_{fast}}{2}\frac{2-U_{fast}}{1-U_{fast}} + \frac{S_{slow}}{2}\frac{2-U_{slow}}{1-U_{slow}} = 3\frac{2-U_{fast}}{1-U_{fast}} + 6\frac{2-U_{slow}}{1-U_{slow}}$$
+The mean delay in the system is:
+$$Delay = \frac{1}{2S_{fast}}\frac{2-U_{fast}}{1-U_{fast}} + \frac{1}{2S_{slow}}\frac{2-U_{slow}}{1-U_{slow}} = \frac{1}{3}\frac{2-U_{fast}}{1-U_{fast}} + \frac{1}{6}\frac{2-U_{slow}}{1-U_{slow}}$$
+And based on Little's law the utilization is: $U_{fast} = f*\lambda*S$ and $U_{slow} = (1-f)*\lambda*S$.
+
 </p>
 
 ```{r, message=FALSE}
 r_rate = (1:9)*0.1
+f_val = (0:100)*0.01
 
+for(i in r_rate){
+  optimum_point = -1 # finding best f for minimum delay
+  optimum_r = -1  # finding best f for minimum residence time
+  d_delay = 1000000
+  r_delay = 1000000
+  for(j in f_val){
+     # check utilization conditions
+    Uf = j*i*1.5
+    Us = (1-j)*i*3
+    if (Uf <= 1 && Us <= 1){
+      d = ((2-Uf)/(3*(1-Uf))) + ((2-Us)/(6*(1-Us)))
+      r = ((3*(2-Uf))/(2*(1-Uf))) + ((6*(2-Us))/(2*(1-Us)))
+      if (d < d_delay){
+        d_delay = d
+        optimum_point = j
+      }
+      if(r < r_delay){
+        r_delay = r
+        optimum_r = j
+      }
+    }
+  }
+  cat("Request rate=", i, "   optimum f=", optimum_point,"   optimum r=", optimum_r, "\n")
+}
 
 ```
+
+
+<p>
+This shows that if we are in light load f should be 1 and the heavier the load gets, our output converges to $f=0.67$ which is the formula provided in question 2.
+$$f =  \frac{S_{slow}}{S_{slow}+{S_{fast}}} = \frac{3}{3+1.5} \simeq 0.67$$
+</p>
 
 <h2>
 **b)**
 </h2>
 
 <p>
-$$answer!$$
+First we find the mean service time of these two servers: $S = \frac{k\alpha}{\alpha - 1}$
+$$S_{fast} = \frac{\frac{5}{6}*2.25}{2.25 - 1} = \frac{1.875}{1.25} = 1.5$$
+$$S_{slow} = \frac{\frac{5}{3}*2.25}{2.25 - 1} = \frac{1.875}{1.25} = 3$$
+Moreover, remaining service time equals to second moment which is: $\frac{k^2*\alpha}{\alpha - 2}$
+$$S_{remfast} = \frac{(\frac{5}{6})^2*2.25}{2.25 - 2} = \frac{1.875}{0.25} = 6.25$$
+$$S_{remslow} = \frac{(\frac{5}{3})^2*2.25}{2.25 - 2} = \frac{1.875}{0.25} = 25$$
+And for M/G/1 queue we have:
+$$R = \frac{-U_{fast}*S_{fast} + U_{fast}*S_{remfast} + S_{fast}}{1 - U_{fast}} + \frac{-U_{slow}*S_{slow} + U_{slow}*S_{remslow} + S_{slow}}{1 - U_{slow}}$$
 </p>
-
 ```{r, message=FALSE}
-
+library(PtProcess)
+Sremf = 6.25
+Srems = 25
+for(i in r_rate){
+  optimum_point = -1
+  delay = 1000000
+  Sf = rpareto(1, 5/6, 2.25)
+  Ss = rpareto(1, 5/3, 2.25)
+  for(j in f_val){
+     # check utilization conditions
+    Uf = j*i*Sf
+    Us = (1-j)*i*Ss
+    if (Uf <= 1 && Us <= 1){
+      r = ((Uf*Sremf + Sf - Uf*Sf)/(1-Uf)) + ((Us*Srems + Sf - Us*Ss)/(1-Us))
+      if (d < delay){
+        delay = d
+        optimum_point = j
+      }
+    }
+  }
+  cat("Request rate=", i, "   optimum f=", optimum_point,"\n")
+}
 ```
+<p>
+*Example output:*
+Request rate= 0.1    optimum f= 0 
+$\newline$
+Request rate= 0.2    optimum f= 0.35 
+$\newline$
+Request rate= 0.3    optimum f= 0.18 
+$\newline$
+Request rate= 0.4    optimum f= 0.2 
+$\newline$
+Request rate= 0.5    optimum f= 0.2 
+$\newline$
+Request rate= 0.6    optimum f= 0.4 
+$\newline$
+Request rate= 0.7    optimum f= -1
+$\newline$
+Request rate= 0.8    optimum f= -1 
+$\newline$
+Request rate= 0.9    optimum f= -1 
+$\newline$
+
+Because of the variance in the service time, the queue might get longer, and the difference between two servers is also smaller. So we need to apply more balanced traffic between servers.
+</p>
