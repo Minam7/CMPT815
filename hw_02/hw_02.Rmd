@@ -48,10 +48,9 @@ Question 2.
 </h2>
 
 <p>
-$$answer!$$
-```{r, message=FALSE}
-
-```
+In order to maximize throughput of the system, we need to maximize utilization by keeping slower server busy without overwhelming it. So at time of T, the slower server serve 1 request and the faster server would serve $\frac{S_{slow}}{S_{fast}}$. Then the total of requests would be $1 + \frac{S_{slow}}{S_{fast}}$. For the faster server we have:
+$$f = \frac{\frac{S_{slow}}{S_{fast}}}{1 + \frac{S_{slow}}{S_{fast}}} = \frac{S_{slow}}{S_{slow}+{S_{fast}}}$$
+Moreover, we should check that $U_{slow} \leq 1$ which is satisfied.
 </p>
 
 <h2>
@@ -59,10 +58,7 @@ $$answer!$$
 </h2>
 
 <p>
-$$answer!$$
-```{r, message=FALSE}
-
-```
+So as to minimize request delay, we need to minimize request time, which means users waiting for the faster server. So f should be 1 in this condition.
 </p>
 
 ***
