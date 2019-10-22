@@ -149,15 +149,7 @@ $$max(D_{newdisk}, ND_{max}-Z) \leq R_{newdisk}(N) \leq ND_{newdisk} \rightarrow
 </p>
 
 ```{r, message=FALSE, warning=FALSE}
-library(dplyr)
-# calculate lower bounds for original system
-Rs <- data.frame("N"=1:50, "R"=rep(0,50), stringsAsFactors = FALSE)
-
-for(i in 1:50){
-  Rs[i,2] = max(0.3, (0.12*Rs[i,1]) - 3)
-}
-
-# calculate lower bounds for 10x faster processor
+# calculate lower bounds for new disk
 Rsd3 <- data.frame("N"=1:50, "R"=rep(0,50), stringsAsFactors = FALSE)
 
 for(i in 1:50){
