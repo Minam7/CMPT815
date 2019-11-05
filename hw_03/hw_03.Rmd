@@ -1,0 +1,129 @@
+---
+title: "Analytic Models"
+subtitle: "Assignment 3"
+author: "Mina Mousavifar - 11279515 - sem311"
+output:
+  pdf_document:
+  toc: true
+  toc_depth: 2
+---
+
+<h1>
+Question 1.
+</h1>
+<p>
+$hi$
+$\newline$
+</p>
+```{r, message=FALSE, warning=FALSE}
+```
+***
+<h1>
+Question 2.
+</h1>
+
+<p>
+$hi$
+$\newline$
+</p>
+```{r, message=FALSE, warning=FALSE}
+```
+
+***
+<h1>
+Question 3.
+</h1>
+
+<h2>
+**a)**
+</h2>
+<p>
+$hi$
+$\newline$
+</p>
+```{r, message=FALSE, warning=FALSE}
+```
+
+<h2>
+**b)**
+</h2>
+<p>
+$hi$
+$\newline$
+</p>
+```{r, message=FALSE, warning=FALSE}
+```
+
+***
+<h1>
+Question 4.
+</h1>
+
+<h2>
+**a)**
+</h2>
+<p>
+$hi$
+$\newline$
+</p>
+```{r, message=FALSE, warning=FALSE}
+```
+
+<h2>
+**b)**
+</h2>
+<p>
+$hi$
+$\newline$
+</p>
+```{r, message=FALSE, warning=FALSE}
+```
+
+***
+<h1>
+Question 5.
+</h1>
+
+<h2>
+**a)**
+</h2>
+
+<p>
+$hi$
+$\newline$
+</p>
+```{r, message=FALSE, warning=FALSE}
+```
+
+<h2>
+**b)**
+</h2>
+
+<p>
+$hi$
+$\newline$
+</p>
+```{r, message=FALSE, warning=FALSE}
+```
+
+<h2>
+**c)**
+</h2>
+
+<p>
+$hi$
+$\newline$
+</p>
+```{r, message=FALSE, warning=FALSE}
+```
+
+<h2>
+**d)**
+</h2>
+
+<p>
+$hi$
+$\newline$
+</p>
+```{r, message=FALSE, warning=FALSE}
+```
