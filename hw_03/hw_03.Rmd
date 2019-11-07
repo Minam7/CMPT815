@@ -133,7 +133,7 @@ $$
                 \begin{array}{ll}
                   S_{1} + S_{2} + S_{3} + S_{4} = 1\\
                   \\
-                  1) P_{1}Eviction*S_{1} + P_{2}Eviction*S_{1} + P_{1}Write*S_{1} + P_{2}Write*S_{1} = P_{1}Read*S_{2} +  P_{1}Read*S_{3}\\
+                  1) P_{1}Eviction*S_{1} + P_{2}Eviction*S_{1} + P_{1}Write*S_{1} + P_{2}Write*S_{1} = P_{1}Read*S_{2} +  P_{2}Read*S_{3}\\
                   \rightarrow \lambda*S_{1} + \lambda*S_{1} + \frac{1}{W}*S_{1} + \frac{1}{W}*S_{1} = \frac{1}{R}*S_{2} + \frac{1}{R}*S_{3}\\
                   \\
                   2) P_{1}Read*S_{2} +  P_{2}Write*S_{2} + P_{2}Eviction*S_{2} = \\
@@ -160,7 +160,9 @@ $$
                 \end{array}
 \right.
 $$
+
 ***
+
 <h1>
 Question 5.
 </h1>
@@ -170,11 +172,20 @@ Question 5.
 </h2>
 
 <p>
-$hi$
-$\newline$
-</p>
-```{r, message=FALSE, warning=FALSE}
-```
+We define states as a set of two values, which shows requests in server 1(consider m) & server 2(consider n). Starting at (0,0) which means there is no work in both servers.
+
+Then by rate of $\frac{\lambda}{2}$ we will have a transition to (1,0) or (0,1). Then by rate of $\frac{1}{S}$ will have a transition to (0,0) from (1,0) or (0,1). From (1,0), we might go to (2,0), (1,1) by rate of $\frac{\lambda}{2}$. From (0,1), we might go to (0,2), (1,1) by rate of $\frac{\lambda}{2}$.
+
+So the formulation can be as following:
+
+- State(m,n) $\rightarrow$ State(m+1,n) by rate $\frac{\lambda}{2}$
+- State(m,n) $\rightarrow$ State(m,n+1) by rate $\frac{\lambda}{2}$
+- State(m,n) $\rightarrow$ State(m-1,n) by rate $\frac{1}{S}$
+- State(m,n) $\rightarrow$ State(m,n-1) by rate $\frac{1}{S}$
+
+
+Sample diagram is shown in figure 3.</p>
+![two servers state-transition model](img/a5a.png)
 
 <h2>
 **b)**
