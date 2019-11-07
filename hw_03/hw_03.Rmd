@@ -92,14 +92,13 @@ Question 3.
 **a)**
 </h2>
 <p> This model is provided in figure 1.</p>
-![rps state-transition model](img/a3.png)
+![rps state-transition model](img/a3b.png)
 
 <h2>
 **b)**
 </h2>
 <p>
-![rps divided state-transition model](img/a3b.png)
-We can obtain the following equantions by dividing the graph as in figure 2.
+We can obtain the following equations by dividing the graph as in figure 1.
 $$
 \left\{
                 \begin{array}{ll}
@@ -120,37 +119,43 @@ Question 4.
 <h2>
 **a)**
 </h2>
-<p> This model is provided in figure 3.</p>
-![system state-transition model](img/a4.png)
-</p>
+<p> This model is provided in figure 2.</p>
+![system state-transition model](img/a4b.png)
 
 <h2>
 **b)**
 </h2>
 <p>
-![system divided state-transition model](img/a4b.png)
-We can obtain the following equantions by dividing the graph as in figure 4. Read rate for each processor is \frac{1}{R} and Write rate for each processor is $\frac{1}{W}$.
-
+We can obtain the following equantions by dividing the graph as in figure 2.
+Read rate for each processor is $\frac{1}{R}$ and Write rate for each processor is $\frac{1}{W}$.
 $$
 \left\{
                 \begin{array}{ll}
                   S_{1} + S_{2} + S_{3} + S_{4} = 1\\
+                  \\
                   1) P_{1}Eviction*S_{1} + P_{2}Eviction*S_{1} + P_{1}Write*S_{1} + P_{2}Write*S_{1} = P_{1}Read*S_{2} +  P_{1}Read*S_{3}\\
                   \rightarrow \lambda*S_{1} + \lambda*S_{1} + \frac{1}{W}*S_{1} + \frac{1}{W}*S_{1} = \frac{1}{R}*S_{2} + \frac{1}{R}*S_{3}\\
-                  2) P_{1}Read*S_{2} +  P_{2}Write*S_{2} + P_{2}Eviction*S_{2} = P_{1}Eviction*S_{1} + P_{2}Write*S_{1} + P_{2}Write*S_{3} + P_{2}Write*S_{4} + P_{2}Read*S_{4}\\
+                  \\
+                  2) P_{1}Read*S_{2} +  P_{2}Write*S_{2} + P_{2}Eviction*S_{2} = \\
+                  P_{1}Eviction*S_{1} + P_{2}Write*S_{1} + P_{2}Write*S_{3} + P_{2}Write*S_{4} + P_{2}Read*S_{4}\\
                   \rightarrow \frac{1}{R}*S_{2} + \frac{1}{W}*S_{2} + \lambda*S_{2} = \lambda*S_{1} + \frac{1}{W}*S_{1} + \frac{1}{W}*S_{3} + \frac{1}{W}*S_{4} + \frac{1}{R}*S_{4}\\
-                  3) P_{2}Eviction*S_{1} + P_{1}Write*S_{1} + P_{1}Write*S_{2} + P_{2}Eviction*S_{2} = P_{2}Read*S_{3} + P_{2}Write*S_{3} + P_{2}Write*S_{4} + P_{2}Read*S_{4}\\
+                  \\
+                  3) P_{2}Eviction*S_{1} + P_{1}Write*S_{1} + P_{1}Write*S_{2} + P_{2}Eviction*S_{2} = \\
+                  P_{2}Read*S_{3} + P_{2}Write*S_{3} + P_{2}Write*S_{4} + P_{2}Read*S_{4}\\
                   \rightarrow \lambda*S_{3} + \frac{1}{W}*S_{1} + \frac{1}{W}*S_{2} + \lambda*S_{2} = \frac{1}{R}*S_{3} + \frac{1}{W}*S_{3} + \frac{1}{W}*S_{4} + \frac{1}{R}*S_{4}
                 \end{array}
 \right.
 $$
-
+Finally: $\newline$
 $$
 \left\{
                 \begin{array}{ll}
                   S_{1} + S_{2} + S_{3} + S_{4} = 1\\
+                  \\
                   1)2S_{1}\lambda + \frac{2S_{1}}{W} = \frac{S_{2} + S_{3}}{R}\\
+                  \\
                   2) \frac{S_{2}}{R} + \frac{S_{2}}{W} + S_{2}\lambda = S_{1}\lambda + \frac{S_{1}+S_{3}+S_{4}}{W} + \frac{S_{4}}{R}\\
+                  \\
                   3) S_{3}\lambda + S_{2}\lambda + \frac{S_{1}+S_{2}}{W} = \frac{S_{3}+S_{4}}{W} + \frac{S_{3}+S_{4}}{R}
                 \end{array}
 \right.
