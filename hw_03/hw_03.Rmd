@@ -190,32 +190,54 @@ Sample diagram is shown in figure 3.</p>
 <h2>
 **b)**
 </h2>
+Again we consider the same satate definition as part a.
+Starting at (0,0) which means there is no work in both servers.
 
-<p>
-$hi$
-$\newline$
-</p>
-```{r, message=FALSE, warning=FALSE}
-```
+Then by rate of $\frac{\lambda}{2}$ we will have a transition to (1,0) or (0,1). Then by rate of $\frac{1}{S}$ will have a transition to (0,0) from (1,0) or (0,1). From (1,0), we can't go to (2,0) in contrast with part a, however we might go to  (1,1) by rate of $\lambda$. From (0,1), we can't go to (0,2), but we might go (1,1) by rate of $\lambda$.
+
+So the formulation can be as following:
+
+- State(m,n) $\rightarrow$ State(m+1,n), if m = n by rate $\frac{\lambda}{2}$
+- State(m,n) $\rightarrow$ State(m+1,n), if m < n by rate $\lambda$
+- State(m,n) $\rightarrow$ State(m,n+1), if m = n by rate $\frac{\lambda}{2}$
+- State(m,n) $\rightarrow$ State(m,n+1), if m > n by rate $\lambda$
+- State(m,n) $\rightarrow$ State(m-1,n) by rate $\frac{1}{S}$
+- State(m,n) $\rightarrow$ State(m,n-1) by rate $\frac{1}{S}$
+
+
+Sample diagram is shown in figure 4. We should note that we can reach node (2,0) by moving to (2,1) from (1,1) by rate of $\frac{\lambda}{2}$ and then server 2 serving request by rate of $\frac{1}{S}$</p>
+
+![two servers state-transition model](img/a5b.png)
+
 
 <h2>
 **c)**
 </h2>
+Here we change states so that we can find previous served server (mentioned as A & B) in addition to the number of requests in each server. So our states have three values. We assume that the round robin routing starts with routing request to server 1.
+
+Starting at (0,0,A) which means there is no work in both servers.
+Then by rate of $\lambda$ we will have a transition to (1,0,A). Then by rate of $\lambda$ we will have a transition to (1,1,B). From (1,1,B) we might go to (0,1,B) or (1,0,B) by rate of $\frac{1}{S}$.
+
+So the formulation can be as following:
+
+- State(m,n,A) $\rightarrow$ State(m,n+1,B) by rate $\lambda$
+- State(m,n,B) $\rightarrow$ State(m+1,n,A) by rate $\lambda$
+- State(m,n,A) $\rightarrow$ State(m-1,n,A) by rate $\frac{1}{S}$
+- State(m,n,B) $\rightarrow$ State(m,n-1,B) by rate $\frac{1}{S}$
+
+However I think in this problem servers serving doesn't change the state and we can simply define our state space as a one dimentional value of routed server. Then by rate of $\lambda$ we move from Server A to Server B and vice-versa.
+Sample diagram for 1 dimentional state is shown in figure 5.</p>
+![simple round robin state-transition model](img/a5c.png)
 
 <p>
-$hi$
-$\newline$
-</p>
-```{r, message=FALSE, warning=FALSE}
-```
+Sample diagram for 3 dimentional state is also shown in figure 6.</p>
+
+![round robin state-transition model](img/a5c2.png)
 
 <h2>
 **d)**
 </h2>
 
 <p>
-$hi$
-$\newline$
+
 </p>
-```{r, message=FALSE, warning=FALSE}
-```
