@@ -75,6 +75,12 @@ $hi$
 $\newline$
 </p>
 ```{r, message=FALSE, warning=FALSE}
+N = 1:30
+for(i in N){
+  # find max troughput based on MVA
+  
+}
+
 ```
 
 ***
@@ -85,22 +91,26 @@ Question 3.
 <h2>
 **a)**
 </h2>
-<p>
-$hi$
-$\newline$
-</p>
-```{r, message=FALSE, warning=FALSE}
-```
+<p> This model is provided in figure 1.</p>
+![rps state-transition model](img/a3.png)
 
 <h2>
 **b)**
 </h2>
 <p>
-$hi$
-$\newline$
+![rps divided state-transition model](img/a3b.png)
+We can obtain the following equantions by dividing the graph as in figure 2.
+$$
+\left\{
+                \begin{array}{ll}
+                  P_{rock} + P_{paper} + P_{scissors} = 1\\
+                  0.4P_{paper} + 0.4P_{scissors} = 0.5P_{rock} + 0.2P_{rock}\\
+                  0.2P_{rock} + 0.3P_{paper} = 0.4P_{scissors} + 0.3P_{scissors}
+                \end{array}
+\right.
+$$
+The results are $P_{rock} = \frac{4}{11}$, $P_{paper} = \frac{41}{110}$, $P_{scissors}=\frac{29}{110}$
 </p>
-```{r, message=FALSE, warning=FALSE}
-```
 
 ***
 <h1>
