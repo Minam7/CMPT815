@@ -70,20 +70,52 @@ cat("R big: ", Rb, 'milliseconds')
 Question 2.
 </h1>
 
-<p>
-$hi$
-$\newline$
-</p>
 ```{r, message=FALSE, warning=FALSE}
+# initialization
+Q = seq(0,0,length.out=2)
+R = seq(0,0,length.out=2)
+maxpreR = seq(0,0,length.out=2)
 N = 1:30
+X = 0
+Z = 30
+f_val = (0:100)*0.01
 for(i in N){
-  # find max troughput based on MVA
-  
+  optimum_x = -1 
+  optimum_f = -1  # finding best f for minimum delay
+  R_tot = 0
+  # checking each f value
+  for(f in f_val){
+    # find max troughput based on MVA
+    for(k in 1:2){
+      if(k==1){
+        # fast server
+        R[k] = (f)*(1.5)*(1+(f*Q[k]))
+      } else{
+        # slow server
+         R[k] = (1-f)*(3)*(1+((1-f)*Q[k]))
+      }
+    }
+    R_tot = sum(R)
+    X = (i)/(Z + R_tot)
+    if(X > optimum_x){
+      optimum_x = X
+      optimum_f = f
+      maxpreR = R
+    }
+  }
+  for(k in 1:2){
+    Q[k] = maxpreR[k]*optimum_x
+  }
+  cat("Number of customers: ", i, " Optimal f based on MVA: ", optimum_f, "\n")
 }
 
 ```
+<p>
+So based on these results, again we see that the optimal f converges to $f = \frac{S_{slow}}{S_{slow} + S_{fast}} = \frac{2}{3}=0.69$
+</p>
 
 ***
+\newpage
 <h1>
 Question 3.
 </h1>
@@ -98,7 +130,7 @@ Question 3.
 **b)**
 </h2>
 <p>
-We can obtain the following equations by dividing the graph as in figure 1.
+We can obtain the following equations by dividing the graph as figure 1.
 $$
 \left\{
                 \begin{array}{ll}
@@ -112,6 +144,7 @@ The results are $P_{rock} = \frac{4}{11}$, $P_{paper} = \frac{41}{110}$, $P_{sci
 </p>
 
 ***
+\newpage
 <h1>
 Question 4.
 </h1>
@@ -126,8 +159,10 @@ Question 4.
 **b)**
 </h2>
 <p>
-We can obtain the following equantions by dividing the graph as in figure 2.
+We can obtain the following equantions by dividing the graph as figure 2.
 Read rate for each processor is $\frac{1}{R}$ and Write rate for each processor is $\frac{1}{W}$.
+
+
 $$
 \left\{
                 \begin{array}{ll}
@@ -162,7 +197,6 @@ $$
 $$
 
 ***
-
 <h1>
 Question 5.
 </h1>
@@ -187,6 +221,7 @@ So the formulation can be as following:
 Sample diagram is shown in figure 3.</p>
 ![two servers state-transition model](img/a5a.png)
 
+\newpage
 <h2>
 **b)**
 </h2>
@@ -239,7 +274,7 @@ Sample diagram for 3 dimentional state is also shown in figure 6.</p>
 </h2>
 
 <p>
-In my opinion, second routing algorithm might have better performance, because it tries to keep the utilization of the less crowded server and prevent overflowing of the more crowded server. 
+In my opinion, second routing algorithm might have better performance, because it tries to keep the utilization of the less crowded server by preventing inactivity, and prevent overflowing of the more crowded server. 
 
 Then I think third routing algorithm might have better performance than first one, because worst case of part a algorithm might end in overflowing one server severly and keeping the other server idle in this time. 
 </p>
