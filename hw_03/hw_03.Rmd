@@ -239,5 +239,7 @@ Sample diagram for 3 dimentional state is also shown in figure 6.</p>
 </h2>
 
 <p>
+In my opinion, second routing algorithm might have better performance, because it tries to keep the utilization of the less crowded server and prevent overflowing of the more crowded server. 
 
+Then I think third routing algorithm might have better performance than first one, because worst case of part a algorithm might end in overflowing one server severly and keeping the other server idle in this time. 
 </p>
