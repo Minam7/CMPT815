@@ -1,0 +1,43 @@
+---
+title: "Data Analysis of Massive Online Open Courses"
+subtitle: "CMPT815, Computer Systems and Performance Evaluation"
+author: "Mina Moosavifar"
+output:
+  prettydoc::html_pretty:
+    theme: tactile
+    highlight: github
+---
+
+<div align="center">
+<img  src="images/mooc.jpg"  align = 'center'>
+</div>
+
+
+
+***
+<p>
+• Long-term popularity evolution of a course based on registration
+
+• The relation between Student Assessment and use of online resources.
+
+• Temporal patterns of time spent in MOOCs
+
+• Exploratory analysis of forums of Coursera and Standford dataset.
+</p>
+***
+<p>
+
+<br>
+</p>
+
+```{r, message=FALSE, warning=FALSE, comment=NA}
+library(readr)
+library(dplyr)
+library(stringr)
+library(highcharter)
+library(ggplot2)
+library(stringr)
+library(topicmodels)
+library(tidytext)
+```
+***
