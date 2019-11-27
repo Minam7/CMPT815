@@ -12,32 +12,64 @@ output:
 <img  src="images/mooc.jpg"  align = 'center'>
 </div>
 
+***
 
+<p>
+In this project we mainly focus on following four insights.
+
+• *Long-term popularity evolution of a course based on registration*
+
+• *The relation between Student Assessment and use of online resources*
+
+• *Temporal patterns of time spent in MOOCs*
+
+• *Exploratory analysis of forums of Coursera and Standford dataset*
+</p>
 
 ***
-<p>
-• Long-term popularity evolution of a course based on registration
-
-• The relation between Student Assessment and use of online resources.
-
-• Temporal patterns of time spent in MOOCs
-
-• Exploratory analysis of forums of Coursera and Standford dataset.
-</p>
-***
-<p>
-
-<br>
-</p>
+<h4>
+Importing and cleaning data
+</h4>
 
 ```{r, message=FALSE, warning=FALSE, comment=NA}
 library(readr)
-library(dplyr)
-library(stringr)
-library(highcharter)
+
 library(ggplot2)
-library(stringr)
-library(topicmodels)
 library(tidytext)
+library(stringr)
+
+oulad_assessments = readr::read_csv("data/anonymisedData/assessments.csv")
+oulad_courses = readr::read_csv("data/anonymisedData/courses.csv")
+oulad_studentAssessment = readr::read_csv("data/anonymisedData/studentAssessment.csv")
+oulad_studentInfo = readr::read_csv("data/anonymisedData/studentInfo.csv")
+oulad_studentRegistration = readr::read_csv("data/anonymisedData/studentRegistration.csv")
+#oulad_studentVle = readr::read_csv("data/anonymisedData/studentVle.csv")
+#oulad_vle = readr::read_csv("data/anonymisedData/vle.csv")
 ```
+
+***
+
+<h4> Long-term popularity evolution of a course based on registration </h4>
+
+```{r, message=FALSE, warning=FALSE, comment=NA}
+library(dplyr)
+library(highcharter)
+
+oulad_course_popularity <- oulad_studentRegistration %>% group_by(code_module, code_presentation) %>% summarise(count = n())
+oulad_course_popularity <- with(oulad_course_popularity, oulad_course_popularity[order(code_presentation, code_module, count),])
+
+mean_student_registration = mean(oulad_course_popularity[['count']])
+
+oulad_course_popularity  %>% 
+  hchart(type = "line", hcaes(x = code_presentation, y = count, group = code_module)) %>% 
+  hc_yAxis(title = list(text = "Popularity"), tickInterval = 100,
+           plotLines = list(list(color = "#FF0000", width = 2, value = mean_student_registration, dashStyle = 'shortdash'))
+           ) %>% 
+  hc_xAxis(title = list(text = "Term"), categories= list('2013B','2013J','2014B','2014J')) %>% 
+  hc_title(text = "Course Popularity based on Student Registration", style = list(fontWeight = "bold"))
+```
+
+<p>
+As we can see in this chart, more popular courses have more students in October terms, which is denoted by letter J at the end of term. However, less popular courses doesn't follow such pattern.
+</p>
 ***
