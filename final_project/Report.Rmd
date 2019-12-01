@@ -34,7 +34,6 @@ Importing and cleaning data
 ```{r, message=FALSE, warning=FALSE, comment=NA}
 library(readr)
 
-library(ggplot2)
 library(tidytext)
 library(stringr)
 
@@ -43,8 +42,8 @@ oulad_courses = readr::read_csv("data/anonymisedData/courses.csv")
 oulad_studentAssessment = readr::read_csv("data/anonymisedData/studentAssessment.csv")
 oulad_studentInfo = readr::read_csv("data/anonymisedData/studentInfo.csv")
 oulad_studentRegistration = readr::read_csv("data/anonymisedData/studentRegistration.csv")
-#oulad_studentVle = readr::read_csv("data/anonymisedData/studentVle.csv")
-#oulad_vle = readr::read_csv("data/anonymisedData/vle.csv")
+oulad_studentVle = readr::read_csv("data/anonymisedData/studentVle.csv")
+oulad_vle = readr::read_csv("data/anonymisedData/vle.csv")
 ```
 
 ***
@@ -73,3 +72,88 @@ oulad_course_popularity  %>%
 As we can see in this chart, more popular courses have more students in October terms, which is denoted by letter J at the end of term. However, less popular courses doesn't follow such pattern.
 </p>
 ***
+
+<h4> Courses Online Resouce Summary</h4>
+
+```{r, message=FALSE, warning=FALSE, comment=NA}
+oulad_vle_summary <- oulad_vle %>% group_by(code_module, code_presentation, activity_type) %>% summarise(count = n())
+```
+
+<p>
+Number of Courses online resources across 4 terms.
+</p>
+
+```{r, message=FALSE, warning=FALSE, comment=NA}
+knitr::kable(oulad_vle_summary %>% group_by(code_module) %>% summarise(count = n()))
+```
+
+<p>
+Online resource popularity across 4 terms.
+</p>
+
+```{r, message=FALSE, warning=FALSE, comment=NA}
+knitr::kable(oulad_vle_summary %>% group_by(activity_type) %>% summarise(count = n()) %>% arrange(desc(count)))
+
+#knitr::kable(oulad_vle_summary %>% group_by(code_module, activity_type) %>% summarise(count = n()) %>% arrange(code_module))
+```
+
+```{r, message=FALSE, warning=FALSE, comment=NA}
+library("viridis")
+
+oulad_student_vle_summary <- oulad_studentVle %>% group_by(id_student, code_module, code_presentation) %>% summarise(clicks = sum(sum_click))
+
+fntltp <- JS("function(){
+  return this.point.x + ' ' +  this.series.yAxis.categories[this.point.y] + ':<br>' +
+  Highcharts.numberFormat(this.point.value, 2);
+}")
+
+hchart(oulad_student_vle_summary %>% group_by(code_module, code_presentation) %>% summarise(clicks = sum(clicks)), "heatmap", hcaes(x = code_presentation, y = code_module, value = clicks)) %>%
+  hc_colorAxis(stops = color_stops(10, rev(inferno(10))),
+               type = "logarithmic") %>% 
+  hc_yAxis(reversed = TRUE, tickLength = 0, gridLineWidth = 0, minorGridLineWidth = 0,
+           labels = list(style = list(fontSize = "8px"))) %>% 
+  hc_tooltip(formatter = fntltp) %>% 
+  hc_title(text = "Heatmap of online resource clicks") %>% 
+  hc_legend(layout = "vertical", verticalAlign = "top",
+            align = "right", valueDecimals = 0) %>% 
+  hc_size(height = 800)
+```
+
+```{r, message=FALSE, warning=FALSE, comment=NA}
+library(ggplot2)
+
+oulad_vle_course_summary <- oulad_vle %>% group_by(code_module, code_presentation) %>% summarise(count = n())
+
+oulad_full_vle_summary <- inner_join(oulad_student_vle_summary, oulad_vle_course_summary, by = c("code_module", "code_presentation")) %>% mutate(usage = clicks*100/count)
+
+oulad_full_student_assessment <- inner_join(oulad_assessments, oulad_studentAssessment, by = 'id_assessment')
+
+oulad_vle_assessment <- inner_join(oulad_full_vle_summary, oulad_full_student_assessment, by = c("id_student", "code_module", "code_presentation")) %>% mutate(weight_score = weight*score)%>% group_by(id_student, code_module, code_presentation) %>% summarise(score = sum(weight_score), weight = sum(weight), usage = mean(usage)) %>% mutate(final_score = score/weight)
+
+mean_vle_usage <- mean(oulad_vle_assessment[['usage']])
+oulad_vle_less_use <- oulad_vle_assessment %>% filter(usage <= mean_vle_usage) %>% mutate(type = 'low usage')
+oulad_vle_more_use <- oulad_vle_assessment %>% filter(usage > mean_vle_usage) %>% mutate(type = 'high usage')
+
+oulad_full_vle_assessment <- rbind(oulad_vle_less_use, oulad_vle_more_use)
+p <- ggplot(oulad_full_vle_assessment,aes(x = final_score, fill = type)) + geom_density(alpha= 0.4) + ggtitle("Students Scores Based on Resources Usage")
+p
+```
+
+<p>
+Our Hypothesis is: *Students who use online resources would have better score.*
+<br>
+In order to test such hypothesis, we conduct a Welch two sample t-test. We test that whether students with low usage of online resources have better score.
+</p>
+
+```{r, message=FALSE, warning=FALSE, comment=NA}
+t.test(oulad_vle_less_use$final_score, oulad_vle_more_use$final_score, alternative = 'less')
+```
+<p>
+As we can see here, the probability that the students with low usage of online resources have more scores than other group is low enough to refute our hypothesis. So usage of online resources impacts the score of students.
+</p>
+
+***
+<h4> Temporal patterns of time spent in MOOCs</h4>
+```{r, message=FALSE, warning=FALSE, comment=NA}
+
+```
