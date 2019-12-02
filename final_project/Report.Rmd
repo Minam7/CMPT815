@@ -19,7 +19,9 @@ In this project we mainly focus on following four insights.
 
 • *Long-term popularity evolution of a course based on registration*
 
-• *The relation between Student Assessment and use of online resources*
+• *The relation between student assessment and use of online resources*
+
+• *The relation between online resources and students score*
 
 • *Temporal patterns of time spent in MOOCs*
 
@@ -65,7 +67,7 @@ oulad_course_popularity  %>%
            plotLines = list(list(color = "#FF0000", width = 2, value = mean_student_registration, dashStyle = 'shortdash'))
            ) %>% 
   hc_xAxis(title = list(text = "Term"), categories= list('2013B','2013J','2014B','2014J')) %>% 
-  hc_title(text = "Course Popularity based on Student Registration", style = list(fontWeight = "bold"))
+  hc_title(text = "Course Popularity based on number of Student Registration", style = list(fontWeight = "bold"))
 ```
 
 <p>
@@ -84,7 +86,7 @@ Number of Courses online resources across 4 terms.
 </p>
 
 ```{r, message=FALSE, warning=FALSE, comment=NA}
-knitr::kable(oulad_vle_summary %>% group_by(code_module) %>% summarise(count = n()))
+knitr::kable(oulad_vle_summary %>% group_by(code_module) %>% summarise(count = n()), col.names = c("Course Name", "Number of Online Resources"))
 ```
 
 <p>
@@ -92,7 +94,7 @@ Online resource popularity across 4 terms.
 </p>
 
 ```{r, message=FALSE, warning=FALSE, comment=NA}
-knitr::kable(oulad_vle_summary %>% group_by(activity_type) %>% summarise(count = n()) %>% arrange(desc(count)))
+knitr::kable(oulad_vle_summary %>% group_by(activity_type) %>% summarise(count = n()) %>% arrange(desc(count)), col.names = c("Online Resource", "Count"))
 
 #knitr::kable(oulad_vle_summary %>% group_by(code_module, activity_type) %>% summarise(count = n()) %>% arrange(code_module))
 ```
@@ -110,14 +112,20 @@ fntltp <- JS("function(){
 hchart(oulad_student_vle_summary %>% group_by(code_module, code_presentation) %>% summarise(clicks = sum(clicks)), "heatmap", hcaes(x = code_presentation, y = code_module, value = clicks)) %>%
   hc_colorAxis(stops = color_stops(10, rev(inferno(10))),
                type = "logarithmic") %>% 
-  hc_yAxis(reversed = TRUE, tickLength = 0, gridLineWidth = 0, minorGridLineWidth = 0,
+  hc_yAxis(title = list(text = "Course Name"), reversed = TRUE, tickLength = 0, gridLineWidth = 0, minorGridLineWidth = 0,
            labels = list(style = list(fontSize = "8px"))) %>% 
+  hc_xAxis(title = list(text = "Term")) %>% 
   hc_tooltip(formatter = fntltp) %>% 
   hc_title(text = "Heatmap of online resource clicks") %>% 
   hc_legend(layout = "vertical", verticalAlign = "top",
             align = "right", valueDecimals = 0) %>% 
   hc_size(height = 800)
 ```
+
+***
+<h4>
+The relation between student assessment and use of online resources.
+</h4>
 
 ```{r, message=FALSE, warning=FALSE, comment=NA}
 library(ggplot2)
@@ -129,13 +137,16 @@ oulad_full_vle_summary <- inner_join(oulad_student_vle_summary, oulad_vle_course
 oulad_full_student_assessment <- inner_join(oulad_assessments, oulad_studentAssessment, by = 'id_assessment')
 
 oulad_vle_assessment <- inner_join(oulad_full_vle_summary, oulad_full_student_assessment, by = c("id_student", "code_module", "code_presentation")) %>% mutate(weight_score = weight*score)%>% group_by(id_student, code_module, code_presentation) %>% summarise(score = sum(weight_score), weight = sum(weight), usage = mean(usage)) %>% mutate(final_score = score/weight)
+oulad_vle_assessment <- na.omit(oulad_vle_assessment)
 
 mean_vle_usage <- mean(oulad_vle_assessment[['usage']])
-oulad_vle_less_use <- oulad_vle_assessment %>% filter(usage <= mean_vle_usage) %>% mutate(type = 'low usage')
-oulad_vle_more_use <- oulad_vle_assessment %>% filter(usage > mean_vle_usage) %>% mutate(type = 'high usage')
+oulad_vle_less_use <- oulad_vle_assessment %>% filter(usage <= mean_vle_usage) %>% mutate(type = 'low resource usage')
+oulad_vle_more_use <- oulad_vle_assessment %>% filter(usage > mean_vle_usage) %>% mutate(type = 'high resource usage')
 
 oulad_full_vle_assessment <- rbind(oulad_vle_less_use, oulad_vle_more_use)
-p <- ggplot(oulad_full_vle_assessment,aes(x = final_score, fill = type)) + geom_density(alpha= 0.4) + ggtitle("Students Scores Based on Resources Usage")
+oulad_full_vle_assessment <- na.omit(oulad_full_vle_assessment)
+
+p <- ggplot(oulad_full_vle_assessment,aes(x = final_score, fill = type)) + geom_density(alpha= 0.4) + ggtitle("Density of Students Scores Based on Resources Usage") + xlab("Student Final Score")
 p
 ```
 
@@ -153,7 +164,78 @@ As we can see here, the probability that the students with low usage of online r
 </p>
 
 ***
+<h4>
+Courses who have more resources would result in higher final scores.
+</h4>
+
+```{r, message=FALSE, warning=FALSE, comment=NA}
+library(corrplot)
+
+oulad_course_vle <- oulad_vle_summary %>% group_by(code_module, code_presentation) %>% summarise(resource_count = sum(count))
+
+oulad_full_course_vle <- oulad_full_vle_assessment %>% group_by(code_module, code_presentation) %>% summarise(mean_score = mean(final_score), usage = mean(usage)) %>% inner_join(oulad_course_vle, by = c("code_module", "code_presentation"))
+
+cor_course_data <- cor(data.matrix(oulad_full_course_vle %>% ungroup() %>% mutate(code_module = factor(code_module), code_presentation = factor(code_presentation))))
+colnames(cor_course_data) <- c("Course Name", "Term", "Average Score", "Online Resource Usage", "Number of Resources")
+rownames(cor_course_data) <- c("Course Name", "Term", "Average Score", "Online Resource Usage", "Number of Resources")
+corrplot(cor_course_data, method = "color", tl.cex = 0.75/par("cex"), cl.cex = 0.75/par("cex"))
+```
+<p>
+Our Hypothesis is: *Courses who have more online resources would have better score.*
+<br>
+In order to test such hypothesis, we conduct a Welch two sample t-test. We test that whether courses with low online resources would lead to a better score.
+</p>
+```{r, message=FALSE, warning=FALSE, comment=NA}
+mean_course_count <- mean(oulad_full_course_vle[['resource_count']])
+
+oulad_course_less_resource <- oulad_full_course_vle %>% filter(resource_count <= mean_course_count) %>% mutate(type = 'Little number of resource')
+oulad_course_more_resource <- oulad_full_course_vle %>% filter(resource_count > mean_course_count) %>% mutate(type = 'High number of resource')
+
+
+t.test(oulad_course_less_resource$mean_score, oulad_course_more_resource$mean_score, alternative = 'greater')
+```
+
+<p>
+As we can see here, the probability that the courses with low resources would result in lower students' scores isn't low enough to refute our hypothesis, so we can't infer such relation.
+
+Moreover, we can see that mean of final scores with lower number of resources is even slightly more than courses with higher number of resources.
+
+So we test the relation between usage of online courses material and the students' final results.
+<br>
+Our Hypothesis is: *Courses who have more online resources usage would have better score.*
+<br>
+In order to test such hypothesis, we conduct a Welch two sample t-test. We test that whether courses with low online resources usage would lead to a better score.
+</p>
+
+```{r, message=FALSE, warning=FALSE, comment=NA}
+mean_course_usage <- mean(oulad_full_course_vle[['usage']])
+
+oulad_course_less_resource <- oulad_full_course_vle %>% filter(usage <= mean_course_count) %>% mutate(type = 'Low usage')
+oulad_course_more_resource <- oulad_full_course_vle %>% filter(usage > mean_course_count) %>% mutate(type = 'High usage')
+
+
+t.test(oulad_course_less_resource$mean_score, oulad_course_more_resource$mean_score, alternative = 'less')
+```
+
+<p>
+As we can see here, the probability that the courses with low usage of online resources would result in lower students' scores is low enough to refute our hypothesis. 
+
+So we can infer that number of resources isn't important, but resources should be beneficial for the student to result in better scores.
+</p>
+
+***
 <h4> Temporal patterns of time spent in MOOCs</h4>
+
+```{r, message=FALSE, warning=FALSE, comment=NA}
+oulad_vle_info <- oulad_studentVle %>% group_by(date, code_module, code_presentation) %>% summarize(clicks = sum(sum_click))
+
+p <- ggplot(data=oulad_vle_info, aes(x= date, y=clicks, colour=code_module)) + geom_line() + ggtitle("Temporal Pattern of Courses Online Resources") + guides(color=guide_legend(title="Course")) + facet_wrap(~code_presentation)
+p
+```
+
+<p>
+
+</p>
 ```{r, message=FALSE, warning=FALSE, comment=NA}
 
 ```
