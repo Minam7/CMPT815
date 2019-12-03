@@ -1,7 +1,7 @@
 ---
 title: "Data Analysis of Massive Online Open Courses"
 subtitle: "Computer Systems and Performance Evaluation"
-author: "Mina Moosavifar"
+author: "Mina Mousavifar"
 output:
   prettydoc::html_pretty:
     theme: architect
@@ -29,7 +29,7 @@ In this project I mainly focus on following insights.
 
 • *Temporal patterns of time spent in MOOCs*
 
-• *Exploratory analysis of forums of Coursera and Standford dataset*
+• *Characteristics Impacting Online Usage of Resources*
 </p>
 
 ***
@@ -39,9 +39,6 @@ Importing and cleaning data
 
 ```{r, message=FALSE, warning=FALSE, comment=NA}
 library(readr)
-
-library(tidytext)
-library(stringr)
 
 oulad_assessments = readr::read_csv("data/anonymisedData/assessments.csv")
 oulad_courses = readr::read_csv("data/anonymisedData/courses.csv")
@@ -100,7 +97,7 @@ Online resource popularity across 4 terms:
 ```{r, message=FALSE, warning=FALSE, comment=NA}
 # knitr::kable(oulad_vle_summary %>% group_by(activity_type) %>% summarise(count = n()) %>% arrange(desc(count)), col.names = c("Online Resource", "Count"))
 
-hchart(oulad_vle_summary %>% group_by(activity_type) %>% summarise(count = n()), "treemap", hcaes(x = activity_type, value = count, color = count))
+hchart(oulad_vle_summary %>% group_by(activity_type) %>% summarise(count = n()), "treemap", hcaes(x = activity_type, value = count, color = count), name = 'count')
 ```
 
 <p>
@@ -259,9 +256,79 @@ p
 As we can see in these charts, at the beginning of the term, which students are motivated for the course, usage of online resources experience a peak. However, as we proceed to the end of the term, the usage of these resources decrease due to lost of interest until we reach the end of the term. Final exams result in the highest usage of resources for each course in each term.
 </p>
 
-<p>
+***
+<h4> Characteristics Impacting Online Usage of Resources </h4>
 
+```{r, message=FALSE, warning=FALSE, comment=NA}
+
+oulad_full_info_assessment <- oulad_full_vle_assessment %>% inner_join(oulad_studentInfo, by = c('id_student', 'code_module', 'code_presentation')) %>% 
+  select(code_module, code_presentation, usage, type, gender, region, highest_education, age_band, studied_credits, disability, final_score)
+
+cor_info_data <- cor(data.matrix(oulad_full_info_assessment %>% ungroup() %>%
+                                   select(-id_student, -type, -final_score) %>% 
+                                   mutate(code_module = factor(code_module), 
+                                          code_presentation = factor(code_presentation),
+                                          gender = factor(gender), 
+                                          region = factor(region), 
+                                          highest_education = factor(highest_education),
+                                          age_band = factor(age_band),
+                                          disability = factor(disability))))
+
+
+
+
+colnames(cor_info_data) <- c("Course Name", "Term", "Resource Usage", "Gender", "Region", "Highest Education", "Age", "Studies Credits", "Disability")
+rownames(cor_info_data) <- c("Course Name", "Term", "Resource Usage", "Gender", "Region", "Highest Education", "Age", "Studies Credits", "Disability")
+corrplot(cor_info_data, method = "color", tl.cex = 0.75/par("cex"), cl.cex = 0.75/par("cex"))
+```
+
+<p>
+As we can see in the previous correlation plot, resource usage might have relations with gender, age, and studied credits, which will be investigated in the following.
 </p>
+
+```{r, message=FALSE, warning=FALSE, comment=NA}
+oulad_factor <- oulad_full_info_assessment %>% group_by(id_student, gender, age_band, studied_credits) %>% summarise(usage = mean(usage))
+
+mean_usage = mean(oulad_factor[['usage']])
+
+oulad_factor <- oulad_factor %>% mutate(type = ifelse(usage < mean_usage, 'low usage', 'high usage'))
+
+p <- ggplot(data = oulad_factor,aes(x = usage,fill = gender)) +
+  geom_histogram(binwidth = 50) + ggtitle("Usage Based on Gender") + xlim(0, 5000) +
+  guides(color=guide_legend(title="Gender"))
+p
+```
+
+<p>
+As we can see in this chart, we have more female students than male students with low usage of system resources, however, this difference decreases as the usage of students increases.
+</p>
+
+```{r, message=FALSE, warning=FALSE, comment=NA}
+oulad_age_factor <- oulad_factor %>% group_by(age_band, type) %>% summarise(count = n()) %>% ungroup()
+
+
+oulad_age_factor %>% hchart(type = "column",hcaes(x = age_band, y = count, group = type)) %>% 
+  hc_xAxis(title = list(text = "Age Range")) %>% 
+  hc_title(text = "Usage Based on Age Range", style = list(fontWeight = "bold")) %>% 
+  hc_add_theme(hc_theme_flat())
+```
+
+<p>
+As we can see in this chart, majority of the students are less than 35 years old, and higher percentage of them have more resource usage than other age groups.
+</p>
+
+```{r, message=FALSE, warning=FALSE, comment=NA}
+p <- ggplot(data = oulad_factor,aes(x = studied_credits, y = usage, colour = type)) +
+  geom_smooth(se=FALSE) + ggtitle("Usage Based on Studied Credits") +
+  guides(color=guide_legend(title="Studied Credits")) +
+  xlab('studied credits')
+p
+```
+
+<p>
+As we can see in this chart, students patterns would have more influence, as the students gain experience in this field. If a student is a heavy user at first, it will use more as its credits increases and vice-versa.
+</p>
+
 ```{r, message=FALSE, warning=FALSE, comment=NA}
 
 ```
