@@ -13,9 +13,13 @@ output:
 </div>
 
 ***
+<p>
+Nowadays, Massive Open Online Course systems have gained lots of attentions and is used in different levels of education.
+In this project I will use [OULAD](https://analyse.kmi.open.ac.uk/open_dataset) which is the anonymised Open University Learning Analytics Dataset (OULAD). It contains data about courses, students and their interactions with Virtual Learning Environment (VLE) for seven selected courses (called modules).
+</p>
 
 <p>
-In this project we mainly focus on following four insights.
+In this project I mainly focus on following insights.
 
 • *Long-term popularity evolution of a course based on registration*
 
@@ -61,17 +65,17 @@ oulad_course_popularity <- with(oulad_course_popularity, oulad_course_popularity
 
 mean_student_registration = mean(oulad_course_popularity[['count']])
 
-oulad_course_popularity  %>% 
+oulad_course_popularity  %>% mutate(code_presentation = ifelse(code_presentation == '2013B', '2013January', ifelse(code_presentation == '2013J', '2013September', ifelse(code_presentation == '2014B', '2014January', '2014September')))) %>% 
   hchart(type = "line", hcaes(x = code_presentation, y = count, group = code_module)) %>% 
   hc_yAxis(title = list(text = "Popularity"), tickInterval = 100,
            plotLines = list(list(color = "#FF0000", width = 2, value = mean_student_registration, dashStyle = 'shortdash'))
            ) %>% 
-  hc_xAxis(title = list(text = "Term"), categories= list('2013B','2013J','2014B','2014J')) %>% 
+  hc_xAxis(title = list(text = "Term"), categories= list('2013January','2013September','2014January','2014September')) %>% 
   hc_title(text = "Course Popularity based on number of Student Registration", style = list(fontWeight = "bold"))
 ```
 
 <p>
-As we can see in this chart, more popular courses have more students in October terms, which is denoted by letter J at the end of term. However, less popular courses doesn't follow such pattern.
+As we can see in this chart, more than average popular courses have more students in September terms. However, less popular courses doesn't follow such pattern.
 </p>
 ***
 
@@ -82,7 +86,7 @@ oulad_vle_summary <- oulad_vle %>% group_by(code_module, code_presentation, acti
 ```
 
 <p>
-Number of Courses online resources across 4 terms.
+Number of Courses online resources across 4 terms:
 </p>
 
 ```{r, message=FALSE, warning=FALSE, comment=NA}
@@ -90,14 +94,18 @@ knitr::kable(oulad_vle_summary %>% group_by(code_module) %>% summarise(count = n
 ```
 
 <p>
-Online resource popularity across 4 terms.
+Online resource popularity across 4 terms:
 </p>
 
 ```{r, message=FALSE, warning=FALSE, comment=NA}
-knitr::kable(oulad_vle_summary %>% group_by(activity_type) %>% summarise(count = n()) %>% arrange(desc(count)), col.names = c("Online Resource", "Count"))
+# knitr::kable(oulad_vle_summary %>% group_by(activity_type) %>% summarise(count = n()) %>% arrange(desc(count)), col.names = c("Online Resource", "Count"))
 
-#knitr::kable(oulad_vle_summary %>% group_by(code_module, activity_type) %>% summarise(count = n()) %>% arrange(code_module))
+hchart(oulad_vle_summary %>% group_by(activity_type) %>% summarise(count = n()), "treemap", hcaes(x = activity_type, value = count, color = count))
 ```
+
+<p>
+Usage of online resources across terms:
+</p>
 
 ```{r, message=FALSE, warning=FALSE, comment=NA}
 library("viridis")
@@ -109,7 +117,7 @@ fntltp <- JS("function(){
   Highcharts.numberFormat(this.point.value, 2);
 }")
 
-hchart(oulad_student_vle_summary %>% group_by(code_module, code_presentation) %>% summarise(clicks = sum(clicks)), "heatmap", hcaes(x = code_presentation, y = code_module, value = clicks)) %>%
+hchart(oulad_student_vle_summary %>% group_by(code_module, code_presentation) %>% summarise(clicks = sum(clicks)) %>% mutate(code_presentation = ifelse(code_presentation == '2013B', '2013January', ifelse(code_presentation == '2013J', '2013September', ifelse(code_presentation == '2014B', '2014January', '2014September')))), "heatmap", hcaes(x = code_presentation, y = code_module, value = clicks)) %>%
   hc_colorAxis(stops = color_stops(10, rev(inferno(10))),
                type = "logarithmic") %>% 
   hc_yAxis(title = list(text = "Course Name"), reversed = TRUE, tickLength = 0, gridLineWidth = 0, minorGridLineWidth = 0,
@@ -122,9 +130,16 @@ hchart(oulad_student_vle_summary %>% group_by(code_module, code_presentation) %>
   hc_size(height = 800)
 ```
 
+<p>
+As we can see in this chart, these resources might even have more than 2 million clicks during the term which relies on different factors such as quality of the material, level of interaction needed for these resources and even students registered for such courses.
+
+In the following part, the efficacy of these resources will be explored.
+</p>
+
+
 ***
 <h4>
-The relation between student assessment and use of online resources.
+The relation between student assessment and usage of online resources.
 </h4>
 
 ```{r, message=FALSE, warning=FALSE, comment=NA}
@@ -149,6 +164,9 @@ oulad_full_vle_assessment <- na.omit(oulad_full_vle_assessment)
 p <- ggplot(oulad_full_vle_assessment,aes(x = final_score, fill = type)) + geom_density(alpha= 0.4) + ggtitle("Density of Students Scores Based on Resources Usage") + xlab("Student Final Score")
 p
 ```
+<p>
+As we can see in this chart, students with more resources have higher scores than other with low usage of resources. In order to statistically examine this claim, t-test will be applied.
+</p>
 
 <p>
 Our Hypothesis is: *Students who use online resources would have better score.*
@@ -180,6 +198,10 @@ colnames(cor_course_data) <- c("Course Name", "Term", "Average Score", "Online R
 rownames(cor_course_data) <- c("Course Name", "Term", "Average Score", "Online Resource Usage", "Number of Resources")
 corrplot(cor_course_data, method = "color", tl.cex = 0.75/par("cex"), cl.cex = 0.75/par("cex"))
 ```
+<p>
+As we see in this chart, the average score of courses, mostly relies on usage of online resources, rather than number of these resources. So we statistically examine this claim.
+</p>
+
 <p>
 Our Hypothesis is: *Courses who have more online resources would have better score.*
 <br>
@@ -229,9 +251,13 @@ So we can infer that number of resources isn't important, but resources should b
 ```{r, message=FALSE, warning=FALSE, comment=NA}
 oulad_vle_info <- oulad_studentVle %>% group_by(date, code_module, code_presentation) %>% summarize(clicks = sum(sum_click))
 
-p <- ggplot(data=oulad_vle_info, aes(x= date, y=clicks, colour=code_module)) + geom_line() + ggtitle("Temporal Pattern of Courses Online Resources") + guides(color=guide_legend(title="Course")) + facet_wrap(~code_presentation)
+p <- ggplot(data=oulad_vle_info %>% mutate(code_presentation = ifelse(code_presentation == '2013B', '2013January', ifelse(code_presentation == '2013J', '2013September', ifelse(code_presentation == '2014B', '2014January', '2014September')))), aes(x= date, y=clicks, colour=code_module)) + geom_line() + ggtitle("Temporal Pattern of Courses Online Resources") + guides(color=guide_legend(title="Course")) + facet_wrap(~code_presentation)
 p
 ```
+
+<p>
+As we can see in these charts, at the beginning of the term, which students are motivated for the course, usage of online resources experience a peak. However, as we proceed to the end of the term, the usage of these resources decrease due to lost of interest until we reach the end of the term. Final exams result in the highest usage of resources for each course in each term.
+</p>
 
 <p>
 
