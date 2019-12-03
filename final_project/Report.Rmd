@@ -14,12 +14,12 @@ output:
 
 ***
 <p>
-Nowadays, Massive Open Online Course systems have gained lots of attentions and is used in different levels of education.
-In this project I will use [OULAD](https://analyse.kmi.open.ac.uk/open_dataset) which is the anonymised Open University Learning Analytics Dataset (OULAD). It contains data about courses, students and their interactions with Virtual Learning Environment (VLE) for seven selected courses (called modules).
+Nowadays, Massive Open Online Course systems have gained lots of attention and are used in different levels of education.
+In this project, I use [OULAD](https://analyse.kmi.open.ac.uk/open_dataset), which is the anonymized Open University Learning Analytics Dataset (OULAD). It contains data about courses, students and their interactions with Virtual Learning Environment (VLE) for seven selected courses (called modules).
 </p>
 
 <p>
-In this project I mainly focus on following insights.
+In this project, I mainly focus on the following insights.
 
 • *Long-term popularity evolution of a course based on registration*
 
@@ -51,7 +51,7 @@ oulad_vle = readr::read_csv("data/anonymisedData/vle.csv")
 
 ***
 
-<h4> Long-term popularity evolution of a course based on registration </h4>
+<h4> Long-term popularity evolution of courses based on registration </h4>
 
 ```{r, message=FALSE, warning=FALSE, comment=NA}
 library(dplyr)
@@ -72,18 +72,18 @@ oulad_course_popularity  %>% mutate(code_presentation = ifelse(code_presentation
 ```
 
 <p>
-As we can see in this chart, more than average popular courses have more students in September terms. However, less popular courses doesn't follow such pattern.
+As we can see in this chart, more than average popular courses have more students in September terms. However, less popular courses don't follow such a pattern.
 </p>
 ***
 
-<h4> Courses Online Resouce Summary</h4>
+<h4> Courses online resource summary</h4>
 
 ```{r, message=FALSE, warning=FALSE, comment=NA}
 oulad_vle_summary <- oulad_vle %>% group_by(code_module, code_presentation, activity_type) %>% summarise(count = n())
 ```
 
 <p>
-Number of Courses online resources across 4 terms:
+Number of courses online resources across 4 terms:
 </p>
 
 ```{r, message=FALSE, warning=FALSE, comment=NA}
@@ -128,7 +128,7 @@ hchart(oulad_student_vle_summary %>% group_by(code_module, code_presentation) %>
 ```
 
 <p>
-As we can see in this chart, these resources might even have more than 2 million clicks during the term which relies on different factors such as quality of the material, level of interaction needed for these resources and even students registered for such courses.
+As we can see in this chart, these resources might even have more than 2 million clicks during the term, which relies on different factors such as quality of the material, level of interaction needed for these resources and even students registered for such courses.
 
 In the following part, the efficacy of these resources will be explored.
 </p>
@@ -136,7 +136,7 @@ In the following part, the efficacy of these resources will be explored.
 
 ***
 <h4>
-The relation between student assessment and usage of online resources.
+The relation between student assessment and usage of online resources
 </h4>
 
 ```{r, message=FALSE, warning=FALSE, comment=NA}
@@ -162,25 +162,25 @@ p <- ggplot(oulad_full_vle_assessment,aes(x = final_score, fill = type)) + geom_
 p
 ```
 <p>
-As we can see in this chart, students with more resources have higher scores than other with low usage of resources. In order to statistically examine this claim, t-test will be applied.
+As we can see in this chart, students with more resources have higher scores than others with low usage of resources. In order to statistically examine this claim, a t-test will be applied.
 </p>
 
 <p>
-Our Hypothesis is: *Students who use online resources would have better score.*
+Our Hypothesis is: *Students who use online resources more would have a better score.*
 <br>
-In order to test such hypothesis, we conduct a Welch two sample t-test. We test that whether students with low usage of online resources have better score.
+In order to test such a Hypothesis, we conduct a Welch two-sample t-test. We test whether students with low usage of online resources would have a better score.
 </p>
 
 ```{r, message=FALSE, warning=FALSE, comment=NA}
 t.test(oulad_vle_less_use$final_score, oulad_vle_more_use$final_score, alternative = 'less')
 ```
 <p>
-As we can see here, the probability that the students with low usage of online resources have more scores than other group is low enough to refute our hypothesis. So usage of online resources impacts the score of students.
+As we can see here, the probability that the students with low usage of online resources have more scores than the other group is low enough to refute our hypothesis. So usage of online resources impacts the score of students.
 </p>
 
 ***
 <h4>
-Courses who have more resources would result in higher final scores.
+Courses that have more resources would result in a higher final score
 </h4>
 
 ```{r, message=FALSE, warning=FALSE, comment=NA}
@@ -196,13 +196,13 @@ rownames(cor_course_data) <- c("Course Name", "Term", "Average Score", "Online R
 corrplot(cor_course_data, method = "color", tl.cex = 0.75/par("cex"), cl.cex = 0.75/par("cex"))
 ```
 <p>
-As we see in this chart, the average score of courses, mostly relies on usage of online resources, rather than number of these resources. So we statistically examine this claim.
+As we see in this chart, the average score of courses mostly relies on the usage of online resources rather than the quantity of these resources. So we statistically examine this claim.
 </p>
 
 <p>
-Our Hypothesis is: *Courses who have more online resources would have better score.*
+Our Hypothesis is: *Courses that have more online resources would have a better score.*
 <br>
-In order to test such hypothesis, we conduct a Welch two sample t-test. We test that whether courses with low online resources would lead to a better score.
+In order to test such a Hypothesis, we conduct a Welch two-sample t-test. We test whether courses with low online resources would lead to a better score.
 </p>
 ```{r, message=FALSE, warning=FALSE, comment=NA}
 mean_course_count <- mean(oulad_full_course_vle[['resource_count']])
@@ -215,15 +215,15 @@ t.test(oulad_course_less_resource$mean_score, oulad_course_more_resource$mean_sc
 ```
 
 <p>
-As we can see here, the probability that the courses with low resources would result in lower students' scores isn't low enough to refute our hypothesis, so we can't infer such relation.
+As we can see here, the probability that the courses with low resources would result in lower students' scores isn't low enough to refute our Hypothesis, so we can't infer such relation.
 
-Moreover, we can see that mean of final scores with lower number of resources is even slightly more than courses with higher number of resources.
+Moreover, we can see that the mean of final scores with a lower number of resources is even slightly more than courses with a higher number of resources.
 
-So we test the relation between usage of online courses material and the students' final results.
+So we test the relation between usage of online course material and the students' final results.
 <br>
-Our Hypothesis is: *Courses who have more online resources usage would have better score.*
+Our Hypothesis is: *Courses who have more online resources usage would have a better score.*
 <br>
-In order to test such hypothesis, we conduct a Welch two sample t-test. We test that whether courses with low online resources usage would lead to a better score.
+In order to test such a Hypothesis, we conduct a Welch two-sample t-test. We test whether courses with low online resources usage would lead to a better score.
 </p>
 
 ```{r, message=FALSE, warning=FALSE, comment=NA}
@@ -239,7 +239,7 @@ t.test(oulad_course_less_resource$mean_score, oulad_course_more_resource$mean_sc
 <p>
 As we can see here, the probability that the courses with low usage of online resources would result in lower students' scores is low enough to refute our hypothesis. 
 
-So we can infer that number of resources isn't important, but resources should be beneficial for the student to result in better scores.
+So we can infer that this is a matter of quality rather than quantity. The number of resources isn't critical, but resources should be beneficial for the student to result in better scores.
 </p>
 
 ***
@@ -253,11 +253,11 @@ p
 ```
 
 <p>
-As we can see in these charts, at the beginning of the term, which students are motivated for the course, usage of online resources experience a peak. However, as we proceed to the end of the term, the usage of these resources decrease due to lost of interest until we reach the end of the term. Final exams result in the highest usage of resources for each course in each term.
+As we can see in these charts, at the beginning of the term, which students are motivated for the course, usage of online resources experiences a peak. However, as we proceed to the end of the term, the usage of these resources decrease due to lost of interest until we reach the end of the term. Final exams result in the highest usage of resources for each course in each term.
 </p>
 
 ***
-<h4> Characteristics Impacting Online Usage of Resources </h4>
+<h4> Characteristics impacting online usage of resources</h4>
 
 ```{r, message=FALSE, warning=FALSE, comment=NA}
 
@@ -300,7 +300,7 @@ p
 ```
 
 <p>
-As we can see in this chart, we have more female students than male students with low usage of system resources, however, this difference decreases as the usage of students increases.
+As we can see in this chart, we have more female students than male students with low usage of system resources. However, this difference decreases as the usage of students increases, and we have a more balanced usage between both genders.
 </p>
 
 ```{r, message=FALSE, warning=FALSE, comment=NA}
@@ -314,7 +314,7 @@ oulad_age_factor %>% hchart(type = "column",hcaes(x = age_band, y = count, group
 ```
 
 <p>
-As we can see in this chart, majority of the students are less than 35 years old, and higher percentage of them have more resource usage than other age groups.
+As we can see in this chart, the majority of the students are less than 35 years old, and the higher percentage of them have more resource usage than other age groups. Interestingly, the group with more than 55 years old, have more heavy users compared to light users.
 </p>
 
 ```{r, message=FALSE, warning=FALSE, comment=NA}
@@ -326,7 +326,7 @@ p
 ```
 
 <p>
-As we can see in this chart, students patterns would have more influence, as the students gain experience in this field. If a student is a heavy user at first, it will use more as its credits increases and vice-versa.
+As we can see in this chart, students' patterns would have more influence as the students gain experience in this field. If a student is a heavy user at first, it will use more as its credits increases and vice-versa.
 </p>
 
 ```{r, message=FALSE, warning=FALSE, comment=NA}
