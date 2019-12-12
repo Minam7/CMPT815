@@ -299,15 +299,28 @@ p <- ggplot(data = oulad_factor,aes(x = usage,fill = gender)) +
 p
 ```
 
+
+
+```{r, message=FALSE, warning=FALSE, comment=NA}
+oulad_gender_factor <- oulad_factor %>% ungroup() %>% select(id_student, gender, usage, type) %>% group_by(gender, type) %>% summarise(count = n()) %>% ungroup()
+
+
+oulad_gender_factor %>% group_by(gender) %>% mutate(rate = round(100*count/sum(count), digits = 2)) %>% 
+  hchart(type = "column", hcaes(x = gender, y = rate, group = type)) %>% 
+  hc_xAxis(title = list(text = "Gender")) %>% 
+  hc_title(text = "Gender influence on resource usage", style = list(fontWeight = "bold")) %>% 
+  hc_add_theme(hc_theme_google())
+```
+
 <p>
 As we can see in this chart, we have more female students than male students with low usage of system resources. However, this difference decreases as the usage of students increases, and we have a more balanced usage between both genders.
 </p>
 
 ```{r, message=FALSE, warning=FALSE, comment=NA}
-oulad_age_factor <- oulad_factor %>% group_by(age_band, type) %>% summarise(count = n()) %>% ungroup()
+oulad_age_factor <- oulad_factor %>% group_by(age_band, type) %>% summarise(count = n()) %>% ungroup() %>% group_by(age_band) %>% mutate(rate = round(count*100/sum(count), digits = 2))
 
 
-oulad_age_factor %>% hchart(type = "column",hcaes(x = age_band, y = count, group = type)) %>% 
+oulad_age_factor %>% hchart(type = "column",hcaes(x = age_band, y = rate, group = type)) %>% 
   hc_xAxis(title = list(text = "Age Range")) %>% 
   hc_title(text = "Usage Based on Age Range", style = list(fontWeight = "bold")) %>% 
   hc_add_theme(hc_theme_flat())
@@ -329,6 +342,20 @@ p
 As we can see in this chart, students' patterns would have more influence as the students gain experience in this field. If a student is a heavy user at first, it will use more as its credits increases and vice-versa.
 </p>
 
-```{r, message=FALSE, warning=FALSE, comment=NA}
 
+<p>
+As we can see in the recent correlation plot, I recognized there might be a correlation between gender and course name. Consequently, this correlation will be further explored in the following part.
+</p>
+```{r, message=FALSE, warning=FALSE, comment=NA}
+oulad_gender_course <- oulad_full_info_assessment %>% group_by(code_module, code_presentation, gender) %>% summarise(count = n()) %>% ungroup()
+
+oulad_gender_course %>% group_by(code_module, code_presentation) %>% mutate(rate = round(count*100/sum(count), digits = 2)) %>% 
+hchart(type = "column", hcaes(x = code_module, y = rate, group = gender)) %>% 
+hc_xAxis(title = list(text = "Gender")) %>% 
+hc_title(text = "Gender influence on courses", style = list(fontWeight = "bold")) %>% 
+hc_add_theme(hc_theme_ggplot2())
 ```
+
+<p>
+As we can see in this plot, most courses show a tremendous difference between females and males who take the course, which means that gender is influential in taking a class. Moreover, we can see that this pattern holds across different terms(based on lines seen in the top of each bar), and we don't see a significant difference in the percentage of each gender across four terms. So we can conclude that these interests were consistent across different semesters. 
+</p>
