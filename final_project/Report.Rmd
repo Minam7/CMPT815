@@ -1,5 +1,5 @@
 ---
-title: "Data Analysis of Massive Online Open Courses"
+title: "Data Analysis of Massive Open Online Courses"
 subtitle: "Computer Systems and Performance Evaluation"
 author: "Mina Mousavifar"
 output:
